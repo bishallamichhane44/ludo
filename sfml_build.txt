@@ -1,0 +1,16 @@
+SFMKL build command:
+g++ -IC:\SFML-2.6.0\include -c main.cpp -o main.o
+
+
+g++ -LC:\SFML-2.6.0\lib .\main.o -o main.exe -lmingw32 -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -lsfml-main -mwindows
+
+
+
+green #18A558
+blue  #21B6A8
+
+
+red #B62121
+green #21B654
+yellow #F0D12E
+blue #2192B6
