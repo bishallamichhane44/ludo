@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 800), "LUDO");
-    sf::CircleShape shape(300.f);
+
+    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+    sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
 
     while (window.isOpen())
@@ -19,6 +21,7 @@ int main()
         window.draw(shape);
         window.display();
     }
+    std::cout << "Bishal Lamichhane is hero";
 
     return 0;
 }
