@@ -98,7 +98,7 @@ int main()
     pieces y1("yellow",1,0,1);
     r1.local=12;
     int dice;
-   
+    int mouse_tracker;
     
 
     int i = 0;
@@ -111,13 +111,22 @@ int main()
                 window.close();
         }
 
+        if(!((sf::Mouse::isButtonPressed(sf::Mouse::Left)))){
+            mouse_tracker=1;
+        }
 
 
         sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-        if(localPosition.x<1201 && localPosition.x>1001 && localPosition.y<673 && localPosition.y>443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
+        if(mouse_tracker==1 && localPosition.x<1201 && localPosition.x>1001 && localPosition.y<673 && localPosition.y>443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
+            
               srand(time(0));
               dice=(rand()%6)+1;
               r1.local=r1.local+dice;
+              if(((sf::Mouse::isButtonPressed(sf::Mouse::Left)))){
+                mouse_tracker=0;
+              }else{
+                mouse_tracker=1;
+              }
               std::cout << dice << std::endl;
         }
 
@@ -153,7 +162,7 @@ int main()
         */
         window.display();
         i = i + 1;
-        Sleep(300);
+        Sleep(10);
     }
 
     return 0;
