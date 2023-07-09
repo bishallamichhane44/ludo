@@ -6,7 +6,7 @@
 #include <cstdlib>
 
 int main()
-{ // smaple for aayush
+{ // smaple for aayush || Add the base positions for each colors . 4 pieces of each colour i.e 4*4=16.
     /*
     int start_yellow[][4] ={{},..};
     */
@@ -70,7 +70,7 @@ int main()
     sf::Sprite ypiece;
     ypiece.setTexture(Yellowpiece);
 
-    // class for pieces
+    // class for Coordinate system.
 
     class coordinate_system
     {
@@ -81,17 +81,42 @@ int main()
         int y_cord;
     };
 
+    class Player
+    {
+    public:
+        std::string Name;
+        std::string color;
+        bool is_selected;
+        bool is_active;
+        int position;
+        float progress;
+        int pieces_left;
+        bool have_completed;
+    };
+
     class pieces
     {
     public:
         std::string color;
+        bool is_selected;
+        bool is_trapped;
+        bool is_complete;
+        bool is_locked;
         int id;
         int local;
         int global;
+        int x_cod;
+        int y_cod;
         pieces(std::string colour, int b, int c, int d) : color(colour), id(b), local(c), global(d) {}
     };
 
     pieces r1("red", 1, 0, 27);
+    pieces r2("red", 2, 0, 27);
+    pieces r3("red", 3, 0, 27);
+    pieces r4("red", 4, 0, 27);
+
+    // Similar for others
+
     pieces b1("blue", 1, 0, 40);
     pieces g1("green", 1, 0, 14);
     pieces y1("yellow", 1, 0, 1);
