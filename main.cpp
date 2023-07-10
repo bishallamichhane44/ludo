@@ -183,10 +183,10 @@ int main()
     sf::Sprite spr7 = b3.sprite();
     sf::Sprite spr8 = b4.sprite();
 
-    /*sf::Sprite spr9 = g1.sprite();
+    sf::Sprite spr9 = g1.sprite();
     sf::Sprite spr10 = g2.sprite();
     sf::Sprite spr11 = g3.sprite();
-    sf::Sprite spr12 = g4.sprite();*/
+    sf::Sprite spr12 = g4.sprite();
 
     sf::Sprite spr13 = y1.sprite();
     sf::Sprite spr14 = y2.sprite();
@@ -267,10 +267,10 @@ int main()
         window.draw(spr7);
         window.draw(spr8);
 
-        /*window.draw(spr9);
+        window.draw(spr9);
         window.draw(spr10);
         window.draw(spr11);
-        window.draw(spr12);*/
+        window.draw(spr12);
 
         window.draw(spr13);
         window.draw(spr14);
