@@ -5,7 +5,7 @@
 #include <time.h>
 #include <cstdlib>
 
-sf::Sprite piece_sprite[16];
+sf::Sprite piece_sprite[18];
 sf::Texture Greenpiece;
 sf::Texture Redpiece;
 sf::Texture Bluepiece;
@@ -191,7 +191,7 @@ int main()
     sf::Sprite spr13 = y1.sprite();
     sf::Sprite spr14 = y2.sprite();
     sf::Sprite spr15 = y3.sprite();
-    /*sf::Sprite spr16 = y4.sprite();*/
+    sf::Sprite spr16 = y4.sprite();
 
     int dice;
     int mouse_tracker;
@@ -275,7 +275,7 @@ int main()
         window.draw(spr13);
         window.draw(spr14);
         window.draw(spr15);
-        /*window.draw(spr16);*/
+        window.draw(spr16);
         
         window.display();
         i = i + 1;
