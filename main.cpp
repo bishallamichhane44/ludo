@@ -171,7 +171,7 @@ int main()
     Dice dice(diceCoords);
 
     // Creating Player1(YELLOW)
-    Coordinates coord11(358, 298), coord12(666, 78), coord13(886, 386), coord14(578, 606);
+    Coordinates coord11(380, 100), coord12(468, 100), coord13(380, 188), coord14(468, 188);
     Coordinates carr1[4] = {coord11, coord12, coord13, coord14};
     string filename = ".\\assets\\yellow_disc.png";
     Piece p11, p12, p13, p14;
@@ -184,7 +184,7 @@ int main()
     Player player1("Bipin", "Yellow", pieces1);
 
     // creating Player2(GREEN)
-    Coordinates coord21(358, 298), coord22(666, 78), coord23(886, 386), coord24(578, 606);
+    Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
     Coordinates carr2[4] = {coord21, coord22, coord23, coord24};
     filename = ".\\assets\\green_disc.png";
     Piece p21, p22, p23, p24;
@@ -198,7 +198,7 @@ int main()
 
     // creating Player3(RED)
 
-    Coordinates coord31(358, 298), coord32(666, 78), coord33(886, 386), coord34(578, 606);
+    Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates carr3[4] = {coord31, coord32, coord33, coord34};
     filename = ".\\assets\\red_disc.png";
     Piece p31, p32, p33, p34;
@@ -212,7 +212,7 @@ int main()
 
     // Creating Player4(BLUE)
 
-    Coordinates coord41(358, 298), coord42(666, 78), coord43(886, 386), coord44(578, 606);
+    Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
     Coordinates carr4[4] = {coord41, coord42, coord43, coord44};
     filename = ".\\assets\\blue_disc.png";
     Piece p41, p42, p43, p44;
@@ -246,7 +246,10 @@ int main()
 
         window.clear();
         window.draw(backgroundSprite);
+        player1.draw();
         player2.draw();
+        player3.draw();
+        player4.draw();
         window.display();
     }
 
