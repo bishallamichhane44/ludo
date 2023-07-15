@@ -5,7 +5,6 @@
 #include <time.h>
 #include <cstdlib>
 
-
 // Path coordinats
 int red_piece[][4] = {{27, 0, 886, 386}, {28, 1, 842, 386}, {29, 2, 798, 386}, {30, 3, 754, 386}, {31, 4, 710, 386}, {32, 5, 666, 430}, {33, 6, 666, 474}, {34, 7, 666, 518}, {35, 8, 666, 562}, {36, 9, 666, 606}, {37, 10, 666, 650}, {38, 11, 622, 650}, {39, 12, 578, 650}, {40, 13, 578, 606}, {41, 14, 578, 562}, {42, 15, 578, 518}, {43, 16, 578, 474}, {44, 17, 578, 430}, {45, 18, 534, 386}, {46, 19, 490, 386}, {47, 20, 446, 386}, {48, 21, 402, 386}, {49, 22, 358, 386}, {50, 23, 314, 386}, {51, 24, 314, 342}, {0, 25, 314, 298}, {1, 26, 358, 298}, {2, 27, 402, 298}, {3, 28, 446, 298}, {4, 29, 490, 298}, {5, 30, 534, 298}, {6, 31, 578, 254}, {7, 32, 578, 210}, {8, 33, 578, 166}, {9, 34, 578, 122}, {10, 35, 578, 78}, {11, 36, 578, 34}, {12, 37, 622, 34}, {13, 38, 666, 34}, {14, 39, 666, 78}, {15, 40, 666, 122}, {16, 41, 666, 166}, {17, 42, 666, 210}, {18, 43, 666, 254}, {19, 44, 710, 298}, {20, 45, 754, 298}, {21, 46, 798, 298}, {22, 47, 842, 298}, {23, 48, 886, 298}, {24, 49, 930, 298}, {25, 50, 930, 342}, {63, 51, 886, 342}, {64, 52, 842, 342}, {65, 53, 798, 342}, {66, 54, 754, 342}, {67, 55, 710, 342}, {57, 56, 622, 342}};
 int blue_piece[][4] = {{40, 0, 578, 606}, {41, 1, 578, 562}, {42, 2, 578, 518}, {43, 3, 578, 474}, {44, 4, 578, 430}, {45, 5, 534, 386}, {46, 6, 490, 386}, {47, 7, 446, 386}, {48, 8, 402, 386}, {49, 9, 358, 386}, {50, 10, 314, 386}, {51, 11, 314, 342}, {0, 12, 314, 298}, {1, 13, 358, 298}, {2, 14, 402, 298}, {3, 15, 446, 298}, {4, 16, 490, 298}, {5, 17, 534, 298}, {6, 18, 578, 254}, {7, 19, 578, 210}, {8, 20, 578, 166}, {9, 21, 578, 122}, {10, 22, 578, 78}, {11, 23, 578, 34}, {12, 24, 622, 34}, {13, 25, 666, 34}, {14, 26, 666, 78}, {15, 27, 666, 122}, {16, 28, 666, 166}, {17, 29, 666, 210}, {18, 30, 666, 254}, {19, 31, 710, 298}, {20, 32, 754, 298}, {21, 33, 798, 298}, {22, 34, 842, 298}, {23, 35, 886, 298}, {24, 36, 930, 298}, {25, 37, 930, 342}, {26, 38, 930, 386}, {27, 39, 886, 386}, {28, 40, 842, 386}, {29, 41, 798, 386}, {30, 42, 754, 386}, {31, 43, 710, 386}, {32, 44, 666, 430}, {33, 45, 666, 474}, {34, 46, 666, 518}, {35, 47, 666, 562}, {36, 48, 666, 606}, {37, 49, 666, 650}, {38, 50, 622, 650}, {68, 51, 622, 606}, {69, 52, 622, 562}, {70, 53, 622, 518}, {71, 54, 622, 474}, {72, 55, 622, 430}, {57, 56, 622, 342}};
@@ -22,15 +21,19 @@ int safe_position[][4] = {{1, 0, 358, 298}, {14, 0, 666, 78}, {27, 0, 886, 386},
 std::string piece_colour[] = {"red", "blue", "green", "yellow"};
 
 // Textures
-sf::Texture Redpiece,Bluepiece,Greenpiece,Yellowpiece,backgroundImage;
-sf::Texture texture_name[]={Redpiece,Bluepiece,Greenpiece,Yellowpiece,backgroundImage};
+sf::Texture Redpiece, Bluepiece, Greenpiece, Yellowpiece, backgroundImage;
+sf::Texture texture_name[] = {Redpiece, Bluepiece, Greenpiece, Yellowpiece, backgroundImage};
+
+// Array to store sprites
+sf::Sprite r1, r2, r3, r4, b1, b2, b3, b4, g1, g2, g3, g4, yel1, yel2, yel3, yel4, backgroundSprite;
+sf::Sprite piece_sprite[] = {r1, r2, r3, r4, b1, b2, b3, b4, g1, g2, g3, g4, yel1, yel2, yel3, yel4};
+sf::Sprite other_sprite[] = {backgroundSprite};
+
+// Filenames
 std::string file_name[] = {".\\assets\\red_disc.png", ".\\assets\\blue_disc.png", ".\\assets\\green_disc.png", ".\\assets\\yellow_disc.png", ".\\assets\\ludo_mini.png"};
 
-//Piece Sprites
-sf::Sprite r1, r2, r3, r4, b1, b2, b3, b4, g1, g2, g3, g4, ye1, ye2, ye3, ye4;
-sf::Sprite sprite_array[]={r1, r2, r3, r4, b1, b2, b3, b4, g1, g2, g3, g4, ye1, ye2, ye3, ye4};
-
-int map_texture(){
+int map_texture()
+{
     int size_of_array = (sizeof(texture_name) / sizeof(*texture_name));
     for (int i = 0; i < size_of_array; i++)
     {
@@ -39,162 +42,64 @@ int map_texture(){
             return -1;
         }
     }
-
     for (int i = 0; i < 16; i++)
     {
         int num = i / 4;
-        sprite_array[i].setTexture(texture_name[num]);
+        piece_sprite[i].setTexture(texture_name[num]);
     }
     return 0;
 }
 
-
-class Player{
-    public:
-    std::string name;
-    int player_id;
-    int piece_colour;
-    bool is_active;
-    bool is_turn;
-    bool is_completed;
-    sf::Sprite pieces[4];
-
-    Player(std::string nam, int a, int b) : name(nam), player_id(a), piece_colour(b){
-        is_active=true;
-    };
-
-};
-
-Player p1("Bishal",1,2);
-
-class pieces{
-    public:
-    int piece_colour;
-    bool is_trapped;
-    bool is_locked;
-    bool is_safe;
-    bool is_completed;
-    bool is_killed;
-    int piece_id;
-    int local=0;
+class coordinate
+{
+public:
+    int local;
     int global;
-    
-    //Initial coordinates
-    int i_x_cord;
-    int i_y_cord;
-
-    // Coordinates after game starts
     int x_cord;
     int y_cord;
 
-    pieces(int id):piece_id(id){
-        x_cord=initial_pos[piece_id][2];
-        y_cord=initial_pos[piece_id][3];
-    };
-
-    int set_position(){
-        if(local>0){
-        x_cord=red_piece[local][2];
-        y_cord=red_piece[local][3];
-        }
-        return 0;
-    }
-
-
+    coordinate() { local = 0; }
 };
 
-// Red pieces
-pieces rp1(0),rp2(1),rp3(2),rp4(3);
+class Piece
+{
+public:
+    std::string color;
+    coordinate position;
+    int belongs_to;
+};
 
-// Blue pieces
-pieces bp1(4),bp2(5),bp3(6),bp4(7);
+class Player
+{
+public:
+    std::string name;
+    int color;
+};
 
-//Green pieces
-pieces gp1(8),gp2(9),gp3(10),gp4(11);
-
-//Yellow pieces
-pieces yp1(12),yp2(13),yp3(14),yp4(15);
-
-//Array of all pieces
-pieces piece_array[]={rp1,rp2,rp3,rp4,bp1,bp2,bp3,bp4,gp1,gp2,gp3,gp4,yp1,yp2,yp3,yp4};
-
-
+sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
 
 int main()
-{   
-
+{
     map_texture();
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
-
-    sf::Sprite backgroundSprite;
-    backgroundSprite.setTexture(texture_name[4]);
-
-
-    //Set position
-    
-    int dice;
-    int mouse_tracker;
-    int player_tracker=0;
-    
+    sf::Sprite gpiece;
+    gpiece.setTexture(Greenpiece);
     while (window.isOpen())
     {
+
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
+            {
                 window.close();
-        }
-
-
-        if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-        {
-            mouse_tracker = 1;
-        }
-
-        sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-        if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-        {
-
-            srand(time(0));
-            dice = (rand() % 6) + 1;
-            player_tracker = player_tracker + 1;
-            piece_array[2].local = piece_array[2].local + dice;
-            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-            {
-                mouse_tracker = 0;
             }
-            else
-            {
-                mouse_tracker = 1;
-            }
-            std::cout << dice << std::endl;
         }
 
-
-
-
-
-
-        piece_array[2].set_position();
-
-        //Update positions of all pieces.
-        for (int i=0;i<16;i++){
-        sprite_array[i].setPosition(piece_array[i].x_cord,piece_array[i].y_cord);
-        }
-
-        
-
+        gpiece.setPosition(300, 300);
         window.clear();
-        window.draw(backgroundSprite);
-
-        // Draw all sprites
-        for (int i=0;i<16;i++){
-            window.draw(sprite_array[i]);
-        }
+        window.draw(gpiece);
         window.display();
+        std::cout << "hello";
     }
 
     return 0;
