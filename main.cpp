@@ -66,6 +66,12 @@ class Player{
 };
 
 Player p1("Bishal",1,2);
+Player p2("Bipin",2,1);
+Player p3("Aayush",3,0);
+Player p4("Miles",4,3);
+
+
+Player player_array[]={p1,p2,p3,p4};
 
 class pieces{
     public:
@@ -94,8 +100,27 @@ class pieces{
 
     int set_position(){
         if(local>0){
-        x_cord=red_piece[local][2];
-        y_cord=red_piece[local][3];
+
+            if(piece_id>=0 && piece_id<4){
+                x_cord=red_piece[local][2];
+                y_cord=red_piece[local][3];
+            }
+
+            if(piece_id>=4 && piece_id<8){
+                x_cord=blue_piece[local][2];
+                y_cord=blue_piece[local][3];
+            }
+
+            if(piece_id>=8 && piece_id<12){
+                x_cord=green_piece[local][2];
+                y_cord=green_piece[local][3];
+            }
+
+            if(piece_id>=12 && piece_id<16){
+                x_cord=yellow_piece[local][2];
+                y_cord=yellow_piece[local][3];
+            }
+        
         }
         return 0;
     }
@@ -138,6 +163,7 @@ int main()
     int dice;
     int mouse_tracker;
     int player_tracker=0;
+    int key=2;
     
     while (window.isOpen())
     {
@@ -157,11 +183,14 @@ int main()
         sf::Vector2i localPosition = sf::Mouse::getPosition(window);
         if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
         {
-
+            if(player_tracker==4){
+                player_tracker=0;
+            }
             srand(time(0));
             dice = (rand() % 6) + 1;
             player_tracker = player_tracker + 1;
-            piece_array[2].local = piece_array[2].local + dice;
+            key=(player_tracker*4)-1;
+            piece_array[key].local = piece_array[key].local + dice;
             if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
                 mouse_tracker = 0;
@@ -171,6 +200,7 @@ int main()
                 mouse_tracker = 1;
             }
             std::cout << dice << std::endl;
+            piece_array[key].set_position();
         }
 
 
@@ -178,7 +208,7 @@ int main()
 
 
 
-        piece_array[2].set_position();
+        
 
         //Update positions of all pieces.
         for (int i=0;i<16;i++){
