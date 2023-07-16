@@ -56,7 +56,7 @@ public:
     int piece_colour;
     bool is_active;
     bool turn_repeat;
-    bool is_turn=false;
+    bool is_turn = false;
     bool is_completed;
     sf::Sprite pieces[4];
 
@@ -71,8 +71,6 @@ Player p2("Bishal", 1, 1);
 Player p3("Miles", 2, 2);
 Player p4("Bipin", 3, 3);
 
-
-
 Player player_array[] = {p1, p2, p3, p4};
 
 class pieces
@@ -80,7 +78,7 @@ class pieces
 public:
     int piece_colour;
     bool is_trapped;
-    bool is_locked=true;
+    bool is_locked = true;
     bool is_safe;
     bool is_completed;
     bool is_killed;
@@ -102,25 +100,29 @@ public:
         y_cord = initial_pos[piece_id][3];
     };
 
-
-    int get_global(){
-        if(piece_id>=0 && piece_id<4){
+    int get_global()
+    {
+        if (piece_id >= 0 && piece_id < 4)
+        {
             return (red_piece[local][0]);
         }
-        if(piece_id>=4 && piece_id<8){
+        if (piece_id >= 4 && piece_id < 8)
+        {
             return (blue_piece[local][0]);
         }
-        if(piece_id>=8 && piece_id<12){
+        if (piece_id >= 8 && piece_id < 12)
+        {
             return (yellow_piece[local][0]);
         }
-        if(piece_id>=12 && piece_id<16){
+        if (piece_id >= 12 && piece_id < 16)
+        {
             return (green_piece[local][0]);
-        }  
+        }
     }
 
     int set_position()
     {
-        if (local > 0)
+        if (local >= 0)
         {
 
             if (piece_id >= 0 && piece_id < 4)
@@ -151,143 +153,154 @@ public:
     }
 };
 
-// Red pieces
-pieces rp1(0), rp2(1), rp3(2), rp4(3);
-
-// Blue pieces
-pieces bp1(4), bp2(5), bp3(6), bp4(7);
-
-// Yellow pieces
-pieces yp1(8), yp2(9), yp3(10), yp4(11);
-
-// Green pieces
-pieces gp1(12), gp2(13), gp3(14), gp4(15);
+// All pieces
+pieces rp1(0), rp2(1), rp3(2), rp4(3), bp1(4), bp2(5), bp3(6), bp4(7), yp1(8), yp2(9), yp3(10), yp4(11), gp1(12), gp2(13), gp3(14), gp4(15);
 
 // Array of all pieces
 pieces piece_array[] = {rp1, rp2, rp3, rp4, bp1, bp2, bp3, bp4, yp1, yp2, yp3, yp4, gp1, gp2, gp3, gp4};
 
 int dice;
-
 int playing;
-int turn_output(){
-    for (int i=0;i<4;i++){
-        if(player_array[i].is_turn==true){
-            playing=i;
+
+int turn_output()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (player_array[i].is_turn == true)
+        {
+            playing = i;
         }
     }
     return 0;
 };
 
-int turn_passer(){
+int turn_passer()
+{
     turn_output();
-    int i=playing;
-    player_array[i].is_turn=false;
-    int k=0;
-        if (i<3){
-            k=i+1;
-        }
-        else if (i==3){
-            k=0;
-        }
+    int i = playing;
+    player_array[i].is_turn = false;
+    int k = 0;
+    if (i < 3)
+    {
+        k = i + 1;
+    }
+    else if (i == 3)
+    {
+        k = 0;
+    }
 
-    player_array[k].is_turn=true;
+    player_array[k].is_turn = true;
     turn_output();
     return 0;
-
 }
 
-int total_piece[4]={0};
-int manage[4]={0};
-int piece_id=200;
+int total_piece[4] = {0};
+int manage[4] = {0};
+int piece_id = 200;
 int color;
-int kk=0;
+int kk = 0;
 int player;
-int repeat=0;
+int repeat = 0;
 bool all_unlocked;
-int counter=0;
+int counter = 0;
 
-int piece_selector(int dice){
+int piece_selector(int dice)
+{
     turn_output();
-    piece_id=100;
-    std::cout<<"turn of player::"<<playing<<std::endl;
-    player=playing;
-    color=player;
-    int k=player*4;
-    for (int i=0;i<4;i++){
-            total_piece[i]=k;
-            k=k+1;
-        }
-
-    if(dice==6){
-        repeat=1;
-        std::cout<<"six";
+    piece_id = 100;
+    std::cout << std::endl
+              << "Dice::" << dice << std::endl;
+    std::cout << "turn of player::" << playing << std::endl;
+    player = playing;
+    color = player;
+    int k = player * 4;
+    for (int i = 0; i < 4; i++)
+    {
+        total_piece[i] = k;
+        k = k + 1;
     }
 
-    if(dice==1){ 
-        repeat=1;
-        std::cout<<"one";
-        for (int i=0;i<4;i++){
-            manage[i]=total_piece[i]; 
-            kk=4;
-
-        }
-            
+    if (dice == 6)
+    {
+        repeat = 1;
+        std::cout << "six" << std::endl;
     }
 
-    if (dice>1) {
-        for(int i=0;i<4;i++){
-            if(piece_array[total_piece[i]].is_locked==false){
-                std::cout<<"loop entered";
-                manage[kk]=total_piece[i];
-                kk=kk+1;
+    if (dice == 1)
+    {
+        repeat = 1;
+        std::cout << "one" << std::endl;
+        for (int i = 0; i < 4; i++)
+        {
+            manage[i] = total_piece[i];
+            kk = 4;
+        }
+    }
+
+    if (dice > 1)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (piece_array[total_piece[i]].is_locked == false)
+            {
+                std::cout << "loop entered" << std::endl;
+                manage[kk] = total_piece[i];
+                kk = kk + 1;
             }
         }
-        if(kk==0){
-            std::cout<<"All pieces locked player::"<<playing<<std::endl;
+        if (kk == 0)
+        {
+            std::cout << "All pieces are locked for player::" << playing << std::endl;
         }
-        
     }
-    int gg=0;
-    if(kk>0){
-        std::cout<<std::endl<<"Enter the ID of piece that you want to select :: ";
-        for (int i=0;i<kk;i++){
-            std::cout<<" "<<manage[i]<<" ";
+    int gg = 0;
+    if (kk > 0)
+    {
+        std::cout << std::endl
+                  << "Enter the ID of piece that you want to select :: ";
+        for (int i = 0; i < kk; i++)
+        {
+            std::cout << " " << manage[i] << " ";
+        }
+        std::cin >> piece_id;
+        for (int i = 0; i < kk; i++)
+        {
+            if (piece_id == manage[i])
+            {
+                gg = gg + 1;
             }
-            std::cin>>piece_id;
-            for(int i=0;i<kk;i++){
-                if (piece_id==manage[i]){
-                    gg=gg+1;
-                }
-            }
-            if(gg=0){
-                piece_id=100;
-            }
-            piece_array[piece_id].is_locked=false;
-
-
+        }
+        if (gg = 0)
+        {
+            piece_id = 100;
+        }
+        // piece_array[piece_id].is_locked=false;
     }
-    else if (kk=0){
-        piece_id=100;
-        std::cout<<"Piece ID set to 100";
+    else if (kk = 0)
+    {
+        piece_id = 100;
+        std::cout << "Piece ID set to 100" << std::endl;
     }
-    kk=0;
-    if(repeat==1){
-        repeat=0;
+    kk = 0;
+    if (repeat == 1)
+    {
+        repeat = 0;
     }
-    else{
-        std::cout<<"Calling Turn Passer"<<std::endl;
+    else
+    {
+        std::cout << "Calling Turn Passer" << std::endl;
         turn_passer();
-    }  
+        std::cout << "****************" << std::endl
+                  << std::endl;
+    }
     return 0;
 }
-
-
 
 int main()
 {
 
     map_texture();
-    player_array[1].is_turn=true;
+    player_array[1].is_turn = true;
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
@@ -297,7 +310,6 @@ int main()
 
     // Set position
 
-    
     int mouse_tracker;
     int player_tracker = 0;
     int key = 2;
@@ -319,19 +331,28 @@ int main()
         sf::Vector2i localPosition = sf::Mouse::getPosition(window);
         if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
         {
-            
+
             srand(time(0));
             dice = (rand() % 6) + 1;
 
             piece_selector(dice);
-            int k=piece_id;
-            if(piece_id<100){
+            int k = piece_id;
+
+            if (piece_array[k].is_locked == true)
+            {
+                piece_array[k].is_locked = false;
+                std::cout << "Working here" << std::endl;
+                piece_array[k].local = 0;
+                dice = 0;
+                piece_array[k].set_position();
+            }
+
+            if (piece_id < 100)
+            {
                 piece_array[k].local = piece_array[k].local + dice;
                 piece_array[k].set_position();
             }
-            
-            
-            
+
             if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
                 mouse_tracker = 0;
@@ -340,8 +361,6 @@ int main()
             {
                 mouse_tracker = 1;
             }
-            std::cout <<std::endl<<"Dice::"<< dice << std::endl<<"****************"<<std::endl<<std::endl;
-            
         }
 
         // Update positions of all pieces.
