@@ -330,7 +330,7 @@ int rules_manager(){
     for(int i=0;i<16;i++){
         int k=piece_array[i].get_global();
         if(k==p && i!=piece_id && piece_array[i].is_safe==false){
-            std::cout<<"conflict in this :: "<<piece_id<<" "<<i<<" "<<"Global_main"<<p<<"Global_k"<<k<<std::endl;
+            //std::cout<<"conflict in this :: "<<piece_id<<" "<<i<<" "<<"Global_main"<<p<<"Global_k"<<k<<std::endl;
             piece_array[i].set_initial();
             piece_array[i].is_trapped=true;
         }   
@@ -375,10 +375,10 @@ int main()
         if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
         {
 
-            //srand(time(0));
-            //dice = (rand() % 6) + 1;
-            std::cout<<"Enter your desired dice value::";
-            std::cin>>dice;
+            srand(time(0));
+            dice = (rand() % 6) + 1;
+            //std::cout<<"Enter your desired dice value::";
+            //std::cin>>dice;
             piece_selector(dice);
             int k = piece_id;
 
