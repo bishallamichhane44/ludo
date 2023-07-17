@@ -29,6 +29,9 @@ std::string file_name[] = {".\\assets\\red_disc.png", ".\\assets\\blue_disc.png"
 sf::Sprite r1, r2, r3, r4, b1, b2, b3, b4, ye1, ye2, ye3, ye4, g1, g2, g3, g4;
 sf::Sprite sprite_array[] = {r1, r2, r3, r4, b1, b2, b3, b4, ye1, ye2, ye3, ye4, g1, g2, g3, g4};
 
+
+
+
 int map_texture()
 {
     int size_of_array = (sizeof(texture_name) / sizeof(*texture_name));
@@ -83,7 +86,7 @@ public:
     bool is_completed;
     bool is_killed;
     int piece_id;
-    int local = 0;
+    int local = -1;
     int global;
 
     // Initial coordinates
@@ -102,22 +105,30 @@ public:
 
     int get_global()
     {
+        int kkk=0;
         if (piece_id >= 0 && piece_id < 4)
         {
-            return (red_piece[local][0]);
+            kkk=(red_piece[local][0]);
         }
         if (piece_id >= 4 && piece_id < 8)
         {
-            return (blue_piece[local][0]);
+            kkk=(blue_piece[local][0]);
         }
         if (piece_id >= 8 && piece_id < 12)
         {
-            return (yellow_piece[local][0]);
+            kkk=(yellow_piece[local][0]);
         }
         if (piece_id >= 12 && piece_id < 16)
         {
-            return (green_piece[local][0]);
+            kkk=green_piece[local][0];
         }
+        return kkk;
+    }
+
+    int set_initial(){
+        x_cord = initial_pos[piece_id][2];
+        y_cord = initial_pos[piece_id][3];
+        return 0;
     }
 
     int set_position()
@@ -161,6 +172,21 @@ pieces piece_array[] = {rp1, rp2, rp3, rp4, bp1, bp2, bp3, bp4, yp1, yp2, yp3, y
 
 int dice;
 int playing;
+
+int safe_setter(){
+    for(int i=0;i<16;i++){
+        int m=piece_array[i].get_global();
+        for(int j=0;j<8;j++){
+            int nn=safe_position[j][0];
+            if(m==nn){
+                piece_array[i].is_safe=true;
+            }
+        }
+    }
+    return 0;
+}
+
+
 
 int turn_output()
 {
@@ -296,6 +322,23 @@ int piece_selector(int dice)
     return 0;
 }
 
+
+int rules_manager(){
+    turn_output();
+    int p=0;
+    p=piece_array[piece_id].get_global();
+    for(int i=0;i<16;i++){
+        int k=piece_array[i].get_global();
+        if(k==p && i!=piece_id && piece_array[i].is_safe==false){
+            std::cout<<"conflict in this :: "<<piece_id<<" "<<i<<" "<<"Global_main"<<p<<"Global_k"<<k<<std::endl;
+            piece_array[i].set_initial();
+            piece_array[i].is_trapped=true;
+        }   
+    }
+    return 0;
+}
+
+
 int main()
 {
 
@@ -332,9 +375,10 @@ int main()
         if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
         {
 
-            srand(time(0));
-            dice = (rand() % 6) + 1;
-
+            //srand(time(0));
+            //dice = (rand() % 6) + 1;
+            std::cout<<"Enter your desired dice value::";
+            std::cin>>dice;
             piece_selector(dice);
             int k = piece_id;
 
@@ -352,6 +396,8 @@ int main()
                 piece_array[k].local = piece_array[k].local + dice;
                 piece_array[k].set_position();
             }
+            safe_setter();
+            rules_manager();
 
             if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
