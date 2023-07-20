@@ -46,30 +46,13 @@ public:
         xPos = x;
         yPos = y;
     }
-};
 
-class Dice
-{
-private:
-    Coordinates dice_coords;
-    // int score;
-public:
-    Dice(Coordinates c)
+    bool operator==(Coordinates c)
     {
-        dice_coords = c;
+        if (xPos == c.xPos && yPos == c.yPos)
+            return true;
+        return false;
     }
-    void display_dice(int s)
-    {
-    }
-    // Piece get_piece() {}
-    // void roll(Player p)
-    // {
-    //     int score = ((rand() % 6) + 1);
-    //     display_dice(score);
-    //     Piece piece = get_piece();
-    //     piece.move(score);
-    //     piece.set_score(piece.get_score() + score);
-    // }
 };
 
 class Piece
@@ -77,20 +60,28 @@ class Piece
 private:
     sf::Texture piece_texture;
     sf::Sprite piece;
+    Coordinates initialCoords;
     Coordinates coordinate;
     int score = 0;
+    string colour;
 
 public:
-    void set_piece(string filename, Coordinates c)
+    bool is_locked = true;
+    bool is_safe = true;
+    bool reached_home = false;
+
+    void set_piece(string filename, Coordinates c, string col)
     {
         if (!piece_texture.loadFromFile(filename))
         {
-            std::cout << "The Piece Cannot be loaded from:";
+            std::cout << "The Piece Cannot be loaded from:" << filename;
             // return;
         }
         piece.setTexture(piece_texture);
         coordinate = c;
+        colour = col;
         piece.setPosition(coordinate.get_xcoords(), coordinate.get_ycoords());
+        initialCoords = c;
     }
 
     sf::Sprite get_piece()
@@ -103,9 +94,19 @@ public:
         return score;
     }
 
+    Coordinates get_coordinates()
+    {
+        return coordinate;
+    }
+
     void set_score(int s)
     {
         score = s;
+    }
+
+    void set_coordinate(Coordinates c)
+    {
+        coordinate = c;
     }
 
     void set_position(Coordinates c)
@@ -113,14 +114,62 @@ public:
         piece.setPosition(c.get_xcoords(), c.get_ycoords());
     }
 
-    void move(int step)
+    void moveForward(int step)
     {
-        for (int i = 1; i <= step; i++)
+        if (colour == "yellow")
         {
-            piece.setPosition(blue_piece[i][2], blue_piece[i][3]);
-            window.draw(piece);
-            Sleep(500);
+            if (score == 0)
+            {
+                piece.setPosition(yellow_piece[0][2], yellow_piece[0][3]);
+                set_coordinate(Coordinates(yellow_piece[0][2], yellow_piece[0][3]));
+            }
+            else
+            {
+                piece.setPosition(yellow_piece[step + score][2], yellow_piece[step + score][3]);
+                set_coordinate(Coordinates(yellow_piece[step + score][2], yellow_piece[step + score][3]));
+            }
         }
+        else if (colour == "green")
+        {
+            if (score == 0)
+                piece.setPosition(green_piece[0][2], green_piece[0][3]);
+            else
+                piece.setPosition(green_piece[step + score][2], green_piece[step + score][3]);
+            set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+        }
+        else if (colour == "red")
+        {
+            if (score == 0)
+                piece.setPosition(red_piece[0][2], red_piece[0][3]);
+            else
+                piece.setPosition(red_piece[step + score][2], red_piece[step + score][3]);
+            set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+        }
+        else if (colour == "blue")
+        {
+            if (score == 0)
+                piece.setPosition(blue_piece[0][2], blue_piece[0][3]);
+            else
+                piece.setPosition(blue_piece[step + score][2], blue_piece[step + score][3]);
+            set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (coordinate == Coordinates(safe_position[i][2], safe_position[i][3]))
+            {
+                is_safe = true;
+                break;
+            }
+            else
+                is_safe = false;
+        }
+    }
+
+    void moveBackward()
+    {
+        piece.setPosition(initialCoords.get_xcoords(), initialCoords.get_ycoords());
+        set_coordinate(Coordinates(initialCoords.get_xcoords(), initialCoords.get_ycoords()));
     }
 };
 
@@ -129,10 +178,12 @@ class Player
 private:
     string name;
     string colour;
-    Piece pieces[4];
     int total_score = 0;
+    bool isActive = false;
 
 public:
+    Piece pieces[4];
+    Player() {}
     Player(string nam, string col, Piece p[])
     {
         name = nam;
@@ -142,7 +193,6 @@ public:
             pieces[i] = p[i];
         }
     }
-
     void draw()
     {
         for (int i = 0; i < 4; i++)
@@ -150,79 +200,120 @@ public:
             window.draw(pieces[i].get_piece());
         }
     }
+
+    void roll(int &playerTurn, Player *players)
+    {
+        int pt = playerTurn;
+        int lock = 4;
+        // srand(time(0));
+        // int step = ((rand() % 6) + 1);
+        int step;
+        std::cout << "Enter dice no: ";
+        std::cin >> step;
+        int piece_no;
+        for (int i = 0; i < 4; i++)
+        {
+            if (!pieces[i].is_locked)
+            {
+                lock--;
+            };
+        }
+
+        if (step == 1)
+        {
+            std::cout << "Enter piece number of player " << colour << "(1 2 3 4): ";
+            std::cin >> piece_no;
+            pieces[piece_no - 1].is_locked = false;
+            pieces[piece_no - 1].moveForward(step);
+            pieces[piece_no - 1].set_score(pieces[piece_no - 1].get_score() + step);
+        }
+        else if (lock == 4)
+        {
+            std::cout << "All Pieces are locked " << step << std::endl;
+            playerTurn++;
+            return;
+        }
+        else
+        {
+            std::cout << "Enter Piece number of Player " << colour << "(";
+            for (int i = 0; i < 4; i++)
+            {
+                if (!pieces[i].is_locked)
+                    std::cout << i + 1 << " ";
+            }
+            std::cout << "): ";
+            std::cin >> piece_no;
+            if (pieces[piece_no - 1].is_locked)
+            {
+                std::cout << "This piece is locked!!";
+                return;
+            }
+            else
+            {
+                pieces[piece_no - 1].moveForward(step);
+                pieces[piece_no - 1].set_score(pieces[piece_no - 1].get_score() + step);
+            }
+            if (step != 6)
+                playerTurn++;
+        }
+        std::cout << pieces[piece_no - 1].is_safe << std::endl;
+
+        if (pieces[piece_no - 1].is_safe)
+            return;
+        int noOfPlayers = 3;
+        for (int i = 0; i < noOfPlayers; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                std::cout << players[i].pieces[j].get_coordinates().get_xcoords() << " " << players[i].pieces[j].get_coordinates().get_ycoords() << "   ";
+                std::cout << pieces[piece_no - 1].get_coordinates().get_xcoords() << " " << pieces[piece_no - 1].get_coordinates().get_ycoords() << std::endl;
+                if ((i != pt) && players[i].pieces[j].get_coordinates() == pieces[piece_no - 1].get_coordinates())
+                {
+                    players[i].pieces[j].moveBackward();
+                    if (step != 1 || step != 6)
+                        playerTurn--;
+                }
+            }
+        }
+    }
 };
-
-// Player createPlayer(Coordinates coordArr[],string filename,string name,string colour){
-//     Piece p1, p2, p3, p4;
-//     Piece pieces[4]={p1,p2,p3,p4};
-//      for (int i = 0; i < 4; i++)
-//     {
-//         pieces[i].set_piece(filename, coordArr[i]);
-//     }
-//     Player player1(name, colour, pieces);
-
-// }
 
 int main()
 {
-    // creating dice obj
-
-    Coordinates diceCoords(15, 17);
-    Dice dice(diceCoords);
-
-    // Creating Player1(YELLOW)
+    // Initial Coordinates of Pieces
     Coordinates coord11(380, 100), coord12(468, 100), coord13(380, 188), coord14(468, 188);
-    Coordinates carr1[4] = {coord11, coord12, coord13, coord14};
-    string filename = ".\\assets\\yellow_disc.png";
-    Piece p11, p12, p13, p14;
-    Piece pieces1[4] = {p11, p12, p13, p14};
-    for (int i = 0; i < 4; i++)
-    {
-        pieces1[i].set_piece(filename, carr1[i]);
-    }
-
-    Player player1("Bipin", "Yellow", pieces1);
-
-    // creating Player2(GREEN)
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
-    Coordinates carr2[4] = {coord21, coord22, coord23, coord24};
-    filename = ".\\assets\\green_disc.png";
-    Piece p21, p22, p23, p24;
-    Piece pieces2[4] = {p21, p22, p23, p24};
-    for (int i = 0; i < 4; i++)
-    {
-        pieces2[i].set_piece(filename, carr2[i]);
-    }
-
-    Player player2("Ayush", "Green", pieces2);
-
-    // creating Player3(RED)
-
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
-    Coordinates carr3[4] = {coord31, coord32, coord33, coord34};
-    filename = ".\\assets\\red_disc.png";
-    Piece p31, p32, p33, p34;
-    Piece pieces3[4] = {p31, p32, p33, p34};
-    for (int i = 0; i < 4; i++)
-    {
-        pieces3[i].set_piece(filename, carr3[i]);
-    }
-
-    Player player3("Bishal", "Red", pieces3);
-
-    // Creating Player4(BLUE)
-
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
-    Coordinates carr4[4] = {coord41, coord42, coord43, coord44};
-    filename = ".\\assets\\blue_disc.png";
-    Piece p41, p42, p43, p44;
-    Piece pieces4[4] = {p41, p42, p43, p44};
-    for (int i = 0; i < 4; i++)
-    {
-        pieces4[i].set_piece(filename, carr4[i]);
-    }
 
-    Player player4("Lammi", "Blue", pieces4);
+    // Creating Pieces
+    Piece p11, p12, p13, p14;
+    Piece p21, p22, p23, p24;
+    Piece p31, p32, p33, p34;
+    Piece p41, p42, p43, p44;
+
+    string colourOrder[] = {"yellow", "green", "red", "blue"};
+    Coordinates coordArr[][4] = {{coord11, coord12, coord13, coord14}, {coord21, coord22, coord23, coord24}, {coord31, coord32, coord33, coord34}, {coord41, coord42, coord43, coord44}};
+    Piece pieces[][4] = {{p11, p12, p13, p14}, {p21, p22, p23, p24}, {p31, p32, p33, p34}, {p41, p42, p43, p44}};
+
+    int noOfPlayer = 3;
+    // std::cout << "Enter no of Players(2,3,4): ";
+    // std::cin >> noOfPlayer;
+    Player *players = new Player[noOfPlayer];
+    for (int j = 0; j < noOfPlayer; j++)
+    {
+        string playerName = "Bipin";
+        // std::cout << "Enter name of Player" << j + 1 << "(" << colourOrder[j] << "): ";
+        // std::cin >> playerName;
+        string filename = ".\\assets\\" + colourOrder[j] + "_disc.png";
+
+        for (int i = 0; i < 4; i++)
+        {
+            pieces[j][i].set_piece(filename, coordArr[j][i], colourOrder[j]);
+        }
+        Player player(playerName, colourOrder[j], pieces[j]);
+        players[j] = player;
+    }
 
     sf::Texture backgroundImage;
     if (!backgroundImage.loadFromFile(".\\assets\\ludo_mini.png"))
@@ -234,6 +325,7 @@ int main()
 
     sf::Sprite backgroundSprite;
     backgroundSprite.setTexture(backgroundImage);
+    int playerTurn = 0;
 
     while (window.isOpen())
     {
@@ -246,10 +338,32 @@ int main()
 
         window.clear();
         window.draw(backgroundSprite);
-        player1.draw();
-        player2.draw();
-        player3.draw();
-        player4.draw();
+        for (int j = 0; j < noOfPlayer; j++)
+        {
+            players[j].draw();
+        }
+        int mouse_tracker;
+        if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+        {
+            mouse_tracker = 1;
+        }
+
+        sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+        if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+        {
+
+            players[playerTurn].roll(playerTurn, players);
+            playerTurn = playerTurn % noOfPlayer;
+            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+            {
+                mouse_tracker = 0;
+            }
+            else
+            {
+                mouse_tracker = 1;
+            }
+        }
+
         window.display();
     }
 
