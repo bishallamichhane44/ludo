@@ -5,6 +5,7 @@
 #include <bits/stdc++.h>
 
 using std::string;
+int noOfPlayer = 3;
 
 sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
 
@@ -62,7 +63,7 @@ private:
     sf::Sprite piece;
     Coordinates initialCoords;
     Coordinates coordinate;
-    int score = 0;
+    int score = -1;
     string colour;
 
 public:
@@ -118,7 +119,7 @@ public:
     {
         if (colour == "yellow")
         {
-            if (score == 0)
+            if (score == -1)
             {
                 piece.setPosition(yellow_piece[0][2], yellow_piece[0][3]);
                 set_coordinate(Coordinates(yellow_piece[0][2], yellow_piece[0][3]));
@@ -131,27 +132,42 @@ public:
         }
         else if (colour == "green")
         {
-            if (score == 0)
+            if (score == -1)
+            {
                 piece.setPosition(green_piece[0][2], green_piece[0][3]);
+                set_coordinate(Coordinates(green_piece[0][2], green_piece[0][3]));
+            }
             else
+            {
                 piece.setPosition(green_piece[step + score][2], green_piece[step + score][3]);
-            set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+                set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+            }
         }
         else if (colour == "red")
         {
-            if (score == 0)
+            if (score == -1)
+            {
                 piece.setPosition(red_piece[0][2], red_piece[0][3]);
+                set_coordinate(Coordinates(red_piece[0][2], red_piece[0][3]));
+            }
             else
+            {
                 piece.setPosition(red_piece[step + score][2], red_piece[step + score][3]);
-            set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+                set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+            }
         }
         else if (colour == "blue")
         {
-            if (score == 0)
+            if (score == -1)
+            {
                 piece.setPosition(blue_piece[0][2], blue_piece[0][3]);
+                set_coordinate(Coordinates(blue_piece[0][2], blue_piece[0][3]));
+            }
             else
+            {
                 piece.setPosition(blue_piece[step + score][2], blue_piece[step + score][3]);
-            set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+                set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+            }
         }
 
         for (int i = 0; i < 8; i++)
@@ -164,12 +180,15 @@ public:
             else
                 is_safe = false;
         }
+        std::cout << "You are progressing ..." << std::endl;
     }
 
     void moveBackward()
     {
         piece.setPosition(initialCoords.get_xcoords(), initialCoords.get_ycoords());
         set_coordinate(Coordinates(initialCoords.get_xcoords(), initialCoords.get_ycoords()));
+        is_locked = true;
+        std::cout << "Amazing!! you killed one." << std::endl;
     }
 };
 
@@ -203,6 +222,7 @@ public:
 
     void roll(int &playerTurn, Player *players)
     {
+        std::cout << "\n\n********** " << colour << "'s turn **************" << std::endl;
         int pt = playerTurn;
         int lock = 4;
         // srand(time(0));
@@ -211,6 +231,7 @@ public:
         std::cout << "Enter dice no: ";
         std::cin >> step;
         int piece_no;
+
         for (int i = 0; i < 4; i++)
         {
             if (!pieces[i].is_locked)
@@ -219,9 +240,11 @@ public:
             };
         }
 
+        std::cout << "Dice Rolled: " << step << std::endl;
+
         if (step == 1)
         {
-            std::cout << "Enter piece number of player " << colour << "(1 2 3 4): ";
+            std::cout << "Enter your piece number to move/withdraw ( 1 2 3 4 ): ";
             std::cin >> piece_no;
             pieces[piece_no - 1].is_locked = false;
             pieces[piece_no - 1].moveForward(step);
@@ -229,13 +252,13 @@ public:
         }
         else if (lock == 4)
         {
-            std::cout << "All Pieces are locked " << step << std::endl;
+            std::cout << "Sorry!! All of your Pieces are locked " << step << std::endl;
             playerTurn++;
             return;
         }
         else
         {
-            std::cout << "Enter Piece number of Player " << colour << "(";
+            std::cout << "Enter your unlocked piece number to move ( ";
             for (int i = 0; i < 4; i++)
             {
                 if (!pieces[i].is_locked)
@@ -245,7 +268,7 @@ public:
             std::cin >> piece_no;
             if (pieces[piece_no - 1].is_locked)
             {
-                std::cout << "This piece is locked!!";
+                std::cout << "Ohhh!! This piece is locked!!" << std::endl;
                 return;
             }
             else
@@ -256,7 +279,6 @@ public:
             if (step != 6)
                 playerTurn++;
         }
-        std::cout << pieces[piece_no - 1].is_safe << std::endl;
 
         if (pieces[piece_no - 1].is_safe)
             return;
@@ -265,8 +287,6 @@ public:
         {
             for (int j = 0; j < 4; j++)
             {
-                std::cout << players[i].pieces[j].get_coordinates().get_xcoords() << " " << players[i].pieces[j].get_coordinates().get_ycoords() << "   ";
-                std::cout << pieces[piece_no - 1].get_coordinates().get_xcoords() << " " << pieces[piece_no - 1].get_coordinates().get_ycoords() << std::endl;
                 if ((i != pt) && players[i].pieces[j].get_coordinates() == pieces[piece_no - 1].get_coordinates())
                 {
                     players[i].pieces[j].moveBackward();
@@ -296,7 +316,6 @@ int main()
     Coordinates coordArr[][4] = {{coord11, coord12, coord13, coord14}, {coord21, coord22, coord23, coord24}, {coord31, coord32, coord33, coord34}, {coord41, coord42, coord43, coord44}};
     Piece pieces[][4] = {{p11, p12, p13, p14}, {p21, p22, p23, p24}, {p31, p32, p33, p34}, {p41, p42, p43, p44}};
 
-    int noOfPlayer = 3;
     // std::cout << "Enter no of Players(2,3,4): ";
     // std::cin >> noOfPlayer;
     Player *players = new Player[noOfPlayer];
