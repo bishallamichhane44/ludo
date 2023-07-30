@@ -5,7 +5,7 @@
 #include <bits/stdc++.h>
 
 using std::string;
-int noOfPlayer = 3;
+int noOfPlayers = 4;
 
 sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
 
@@ -225,11 +225,11 @@ public:
         std::cout << "\n\n********** " << colour << "'s turn **************" << std::endl;
         int pt = playerTurn;
         int lock = 4;
-        // srand(time(0));
-        // int step = ((rand() % 6) + 1);
-        int step;
-        std::cout << "Enter dice no: ";
-        std::cin >> step;
+        srand(time(0));
+        int step = ((rand() % 6) + 1);
+        // int step;
+        // std::cout << "Enter dice no: ";
+        // std::cin >> step;
         int piece_no;
 
         for (int i = 0; i < 4; i++)
@@ -244,8 +244,13 @@ public:
 
         if (step == 1)
         {
-            std::cout << "Enter your piece number to move/withdraw ( 1 2 3 4 ): ";
-            std::cin >> piece_no;
+            do
+            {
+                std::cout << "Enter your piece number to move/withdraw ( 1 2 3 4 ): ";
+                std::cin >> piece_no;
+                if (piece_no < 1 || piece_no > 4)
+                    std::cout << "Invalid piece Number Reenter!!" << std::endl;
+            } while (piece_no < 1 || piece_no > 4);
             pieces[piece_no - 1].is_locked = false;
             pieces[piece_no - 1].moveForward(step);
             pieces[piece_no - 1].set_score(pieces[piece_no - 1].get_score() + step);
@@ -258,18 +263,24 @@ public:
         }
         else
         {
-            std::cout << "Enter your unlocked piece number to move ( ";
-            for (int i = 0; i < 4; i++)
+            do
             {
-                if (!pieces[i].is_locked)
-                    std::cout << i + 1 << " ";
-            }
-            std::cout << "): ";
-            std::cin >> piece_no;
+            jump:
+                std::cout << "Enter your unlocked piece number to move ( ";
+                for (int i = 0; i < 4; i++)
+                {
+                    if (!pieces[i].is_locked)
+                        std::cout << i + 1 << " ";
+                }
+                std::cout << "): ";
+                std::cin >> piece_no;
+                if (piece_no < 1 || piece_no > 4)
+                    std::cout << "Invalid piece Number Reenter!!" << std::endl;
+            } while (piece_no < 1 || piece_no > 4);
             if (pieces[piece_no - 1].is_locked)
             {
                 std::cout << "Ohhh!! This piece is locked!!" << std::endl;
-                return;
+                goto jump;
             }
             else
             {
@@ -282,7 +293,6 @@ public:
 
         if (pieces[piece_no - 1].is_safe)
             return;
-        int noOfPlayers = 3;
         for (int i = 0; i < noOfPlayers; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -303,8 +313,8 @@ int main()
     // Initial Coordinates of Pieces
     Coordinates coord11(380, 100), coord12(468, 100), coord13(380, 188), coord14(468, 188);
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
-    Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
-    Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
+    Coordinates coord31(380, 496), coord32(468, 496), coord33(380, 584), coord34(468, 584);
+    Coordinates coord41(776, 496), coord42(864, 496), coord43(776, 584), coord44(864, 584);
 
     // Creating Pieces
     Piece p11, p12, p13, p14;
@@ -312,14 +322,18 @@ int main()
     Piece p31, p32, p33, p34;
     Piece p41, p42, p43, p44;
 
-    string colourOrder[] = {"yellow", "green", "red", "blue"};
+    string colourOrder[] = {"yellow", "green", "blue", "red"};
     Coordinates coordArr[][4] = {{coord11, coord12, coord13, coord14}, {coord21, coord22, coord23, coord24}, {coord31, coord32, coord33, coord34}, {coord41, coord42, coord43, coord44}};
     Piece pieces[][4] = {{p11, p12, p13, p14}, {p21, p22, p23, p24}, {p31, p32, p33, p34}, {p41, p42, p43, p44}};
-
-    // std::cout << "Enter no of Players(2,3,4): ";
-    // std::cin >> noOfPlayer;
-    Player *players = new Player[noOfPlayer];
-    for (int j = 0; j < noOfPlayer; j++)
+    do
+    {
+        std::cout << "Enter no of Players(2,3,4): ";
+        std::cin >> noOfPlayers;
+        if (noOfPlayers < 2 || noOfPlayers > 4)
+            std::cout << "Invalid No of players!!" << std::endl;
+    } while (noOfPlayers < 2 || noOfPlayers > 4);
+    Player *players = new Player[noOfPlayers];
+    for (int j = 0; j < noOfPlayers; j++)
     {
         string playerName = "Bipin";
         // std::cout << "Enter name of Player" << j + 1 << "(" << colourOrder[j] << "): ";
@@ -357,7 +371,7 @@ int main()
 
         window.clear();
         window.draw(backgroundSprite);
-        for (int j = 0; j < noOfPlayer; j++)
+        for (int j = 0; j < noOfPlayers; j++)
         {
             players[j].draw();
         }
@@ -372,7 +386,7 @@ int main()
         {
 
             players[playerTurn].roll(playerTurn, players);
-            playerTurn = playerTurn % noOfPlayer;
+            playerTurn = playerTurn % noOfPlayers;
             if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
                 mouse_tracker = 0;
