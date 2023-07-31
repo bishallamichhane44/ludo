@@ -5,7 +5,14 @@
 #include <bits/stdc++.h>
 
 using std::string;
+int mouse_tracker;
 int noOfPlayers = 4;
+int playerTurn = 0;
+int dice = 0;
+int diceInfo = 0;
+int step = 0;
+int dice_turn = 1;
+sf::Vector2i localPosition;
 
 sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
 
@@ -220,88 +227,89 @@ public:
         }
     }
 
-    void roll(int &playerTurn, Player *players)
+    // void roll(int &playerTurn, Player *players)
+    void roll(int &playerTurn, Player *players, int step)
     {
-        std::cout << "\n\n********** " << colour << "'s turn **************" << std::endl;
-        int pt = playerTurn;
-        int lock = 4;
-        srand(time(0));
-        int step = ((rand() % 6) + 1);
-        // int step;
-        // std::cout << "Enter dice no: ";
-        // std::cin >> step;
-        int piece_no;
+        //****************************************************************************************
 
-        for (int i = 0; i < 4; i++)
+        if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
         {
-            if (!pieces[i].is_locked)
+            int lock = 4;
+            for (int i = 0; i < 4; i++)
             {
-                lock--;
-            };
-        }
+                if (!players[playerTurn].pieces[i].is_locked)
+                {
+                    lock--;
+                };
+            }
 
-        std::cout << "Dice Rolled: " << step << std::endl;
+            int piece_no;
+            if (step == 1)
+            {
+                std::cout << "Press your piece to move/withdraw ( 1 2 3 4 )" << std::endl;
 
-        if (step == 1)
-        {
-            do
-            {
-                std::cout << "Enter your piece number to move/withdraw ( 1 2 3 4 ): ";
-                std::cin >> piece_no;
-                if (piece_no < 1 || piece_no > 4)
-                    std::cout << "Invalid piece Number Reenter!!" << std::endl;
-            } while (piece_no < 1 || piece_no > 4);
-            pieces[piece_no - 1].is_locked = false;
-            pieces[piece_no - 1].moveForward(step);
-            pieces[piece_no - 1].set_score(pieces[piece_no - 1].get_score() + step);
-        }
-        else if (lock == 4)
-        {
-            std::cout << "Sorry!! All of your Pieces are locked " << step << std::endl;
-            playerTurn++;
-            return;
-        }
-        else
-        {
-            do
-            {
-            jump:
-                std::cout << "Enter your unlocked piece number to move ( ";
                 for (int i = 0; i < 4; i++)
                 {
-                    if (!pieces[i].is_locked)
-                        std::cout << i + 1 << " ";
+                    localPosition = sf::Mouse::getPosition(window);
+                    int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
+                    int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
+                    if (localPosition.x > pieceX && localPosition.y < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+                    {
+                        diceInfo = 0;
+                        dice = 0;
+                        dice_turn = 1;
+                        piece_no = i;
+                        std::cout << piece_no << std::endl;
+                        players[playerTurn].pieces[piece_no].is_locked = false;
+                        players[playerTurn].pieces[piece_no].moveForward(step);
+                        players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
+                        break;
+                    }
                 }
-                std::cout << "): ";
-                std::cin >> piece_no;
-                if (piece_no < 1 || piece_no > 4)
-                    std::cout << "Invalid piece Number Reenter!!" << std::endl;
-            } while (piece_no < 1 || piece_no > 4);
-            if (pieces[piece_no - 1].is_locked)
+            }
+            else if (lock == 4)
             {
-                std::cout << "Ohhh!! This piece is locked!!" << std::endl;
-                goto jump;
+                std::cout << "Sorry!! All of your Pieces are locked " << std::endl;
+                playerTurn++;
+                dice_turn = 1;
+                dice = 0;
+                diceInfo = 0;
             }
             else
             {
-                pieces[piece_no - 1].moveForward(step);
-                pieces[piece_no - 1].set_score(pieces[piece_no - 1].get_score() + step);
-            }
-            if (step != 6)
-                playerTurn++;
-        }
-
-        if (pieces[piece_no - 1].is_safe)
-            return;
-        for (int i = 0; i < noOfPlayers; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                if ((i != pt) && players[i].pieces[j].get_coordinates() == pieces[piece_no - 1].get_coordinates())
+            jump:
+                std::cout << "Press your unlocked piece number to move ( ";
+                for (int i = 0; i < 4; i++)
                 {
-                    players[i].pieces[j].moveBackward();
-                    if (step != 1 || step != 6)
-                        playerTurn--;
+                    if (!players[playerTurn].pieces[i].is_locked)
+                        std::cout << i + 1 << " ";
+                }
+                std::cout << ")" << std::endl;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    localPosition = sf::Mouse::getPosition(window);
+                    int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
+                    int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
+                    if (localPosition.x > pieceX && localPosition.y < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+                    {
+                        piece_no = i;
+                        std::cout << piece_no << std::endl;
+                        if (pieces[piece_no].is_locked)
+                        {
+                            std::cout << "Ohhh!! This piece is locked!!" << std::endl;
+                            goto jump;
+                        }
+                        players[playerTurn].pieces[piece_no].moveForward(step);
+                        players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
+
+                        if (step != 6)
+                            playerTurn++;
+                        dice_turn = 1;
+                        dice = 0;
+                        diceInfo = 0;
+                        break;
+                    }
                 }
             }
         }
@@ -311,10 +319,11 @@ public:
 int main()
 {
     // Initial Coordinates of Pieces
+    // Coordinates coord11(358 - 40, 298), coord12(468, 100), coord13(380, 188), coord14(468, 188);
     Coordinates coord11(380, 100), coord12(468, 100), coord13(380, 188), coord14(468, 188);
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
-    Coordinates coord31(380, 496), coord32(468, 496), coord33(380, 584), coord34(468, 584);
-    Coordinates coord41(776, 496), coord42(864, 496), coord43(776, 584), coord44(864, 584);
+    Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
+    Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
 
     // Creating Pieces
     Piece p11, p12, p13, p14;
@@ -322,7 +331,7 @@ int main()
     Piece p31, p32, p33, p34;
     Piece p41, p42, p43, p44;
 
-    string colourOrder[] = {"yellow", "green", "blue", "red"};
+    string colourOrder[] = {"yellow", "green", "red", "blue"};
     Coordinates coordArr[][4] = {{coord11, coord12, coord13, coord14}, {coord21, coord22, coord23, coord24}, {coord31, coord32, coord33, coord34}, {coord41, coord42, coord43, coord44}};
     Piece pieces[][4] = {{p11, p12, p13, p14}, {p21, p22, p23, p24}, {p31, p32, p33, p34}, {p41, p42, p43, p44}};
     do
@@ -358,7 +367,6 @@ int main()
 
     sf::Sprite backgroundSprite;
     backgroundSprite.setTexture(backgroundImage);
-    int playerTurn = 0;
 
     while (window.isOpen())
     {
@@ -375,18 +383,28 @@ int main()
         {
             players[j].draw();
         }
-        int mouse_tracker;
         if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
         {
             mouse_tracker = 1;
         }
+        if (!diceInfo)
+        {
+            std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
+            std::cout << "Press dice to roll.." << std::endl;
+            diceInfo = 1;
+        }
 
-        sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-        if (mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+        localPosition = sf::Mouse::getPosition(window);
+        if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
         {
 
-            players[playerTurn].roll(playerTurn, players);
-            playerTurn = playerTurn % noOfPlayers;
+            dice_turn = 0;
+            dice = 1;
+            srand(time(0));
+            step = ((rand() % 6) + 1);
+            // std::cout << "Enter dice no: ";
+            // std::cin >> step;
+            std::cout << "Dice Rolled: " << step << std::endl;
             if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
                 mouse_tracker = 0;
@@ -397,6 +415,21 @@ int main()
             }
         }
 
+        //*****************************************************************************************
+        if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+        {
+            players[playerTurn].roll(playerTurn, players, step);
+
+            playerTurn = playerTurn % noOfPlayers;
+            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+            {
+                mouse_tracker = 0;
+            }
+            else
+            {
+                mouse_tracker = 1;
+            }
+        }
         window.display();
     }
 
