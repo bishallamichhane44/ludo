@@ -207,6 +207,7 @@ public:
     {
         piece.setPosition(initialCoords.get_xcoords(), initialCoords.get_ycoords());
         set_coordinate(Coordinates(initialCoords.get_xcoords(), initialCoords.get_ycoords()));
+        set_score(-1);
         is_locked = true;
         std::cout << "Amazing!! you killed one." << std::endl;
     }
@@ -244,108 +245,137 @@ public:
     void roll(int &playerTurn, Player *players, int step)
     {
         //****************************************************************************************
+        int pt = playerTurn;
+        int checkPoint = 0;
         filename = ".\\assets\\" + colour + "_disc_1.png";
-        if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+        // if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+        // {
+        int lock = 4;
+        for (int i = 0; i < 4; i++)
         {
-            int lock = 4;
+            if (!players[playerTurn].pieces[i].is_locked)
+            {
+                lock--;
+            };
+        }
+
+        int piece_no;
+        if (step == 1)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                pieces[i].set_texture(filename);
+            }
+            std::cout << "Press your piece to move/withdraw ( 1 2 3 4 )" << std::endl;
+
+            for (int i = 0; i < 4; i++)
+            {
+                localPosition = sf::Mouse::getPosition(window);
+                int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
+                int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
+                if (localPosition.x > pieceX && localPosition.x < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+                {
+                    diceInfo = 0;
+                    dice = 0;
+                    dice_turn = 1;
+                    piece_no = i;
+                    std::cout << piece_no << std::endl;
+                    players[playerTurn].pieces[piece_no].is_locked = false;
+                    players[playerTurn].pieces[piece_no].moveForward(step);
+                    checkPoint = 1;
+                    filename = ".\\assets\\" + colour + "_disc.png";
+                    piece_changed = 1;
+                    players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
+                    break;
+                }
+            }
+            player_changed = 0;
+        }
+        else if (lock == 4)
+        {
+            std::cout << "Sorry!! All of your Pieces are locked " << std::endl;
+            playerTurn++;
+            player_changed = 1;
+            std::cout << "Player changed 1" << std::endl;
+            dice_turn = 1;
+            dice = 0;
+            diceInfo = 0;
+        }
+        else
+        {
+
+        jump:
+            std::cout << "Press your unlocked piece number to move ( ";
             for (int i = 0; i < 4; i++)
             {
                 if (!players[playerTurn].pieces[i].is_locked)
                 {
-                    lock--;
-                };
-            }
-
-            int piece_no;
-            if (step == 1)
-            {
-                for (int i = 0; i < 4; i++)
-                {
+                    std::cout << i + 1 << " ";
                     pieces[i].set_texture(filename);
                 }
-                std::cout << "Press your piece to move/withdraw ( 1 2 3 4 )" << std::endl;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    localPosition = sf::Mouse::getPosition(window);
-                    int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
-                    int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
-                    if (localPosition.x > pieceX && localPosition.y < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-                    {
-                        diceInfo = 0;
-                        dice = 0;
-                        dice_turn = 1;
-                        piece_no = i;
-                        std::cout << piece_no << std::endl;
-                        players[playerTurn].pieces[piece_no].is_locked = false;
-                        players[playerTurn].pieces[piece_no].moveForward(step);
-                        filename = ".\\assets\\" + colour + "_disc.png";
-                        piece_changed = 1;
-                        players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
-                        break;
-                    }
-                }
-                player_changed = 0;
             }
-            else if (lock == 4)
-            {
-                std::cout << "Sorry!! All of your Pieces are locked " << std::endl;
-                playerTurn++;
-                player_changed = 1;
-                std::cout << "Player changed 1" << std::endl;
-                dice_turn = 1;
-                dice = 0;
-                diceInfo = 0;
-            }
-            else
-            {
+            std::cout << ")" << std::endl;
 
-            jump:
-                std::cout << "Press your unlocked piece number to move ( ";
-                for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
+            {
+                localPosition = sf::Mouse::getPosition(window);
+                int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
+                int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
+                if (localPosition.x > pieceX && localPosition.x < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
                 {
-                    if (!players[playerTurn].pieces[i].is_locked)
+                    piece_no = i;
+                    std::cout << piece_no << std::endl;
+                    if (pieces[piece_no].is_locked)
                     {
-                        std::cout << i + 1 << " ";
-                        pieces[i].set_texture(filename);
+                        std::cout << "Ohhh!! This piece is locked!!" << std::endl;
+                        goto jump;
                     }
-                }
-                std::cout << ")" << std::endl;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    localPosition = sf::Mouse::getPosition(window);
-                    int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
-                    int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
-                    if (localPosition.x > pieceX && localPosition.y < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+                    players[playerTurn].pieces[piece_no].moveForward(step);
+                    piece_changed = 1;
+                    checkPoint = 1;
+                    filename = ".\\assets\\" + colour + "_disc.png";
+                    players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
+                    player_changed = 0;
+                    if (step != 6)
                     {
-                        piece_no = i;
-                        std::cout << piece_no << std::endl;
-                        if (pieces[piece_no].is_locked)
-                        {
-                            std::cout << "Ohhh!! This piece is locked!!" << std::endl;
-                            goto jump;
-                        }
-                        players[playerTurn].pieces[piece_no].moveForward(step);
-                        piece_changed = 1;
-                        filename = ".\\assets\\" + colour + "_disc.png";
-                        players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
+                        playerTurn++;
+                        player_changed = 1;
+                        std::cout << "Player changed 2";
+                    }
+                    dice_turn = 1;
+                    dice = 0;
+                    diceInfo = 0;
+                    break;
+                }
+            }
+        }
 
-                        if (step != 6)
+        if (checkPoint)
+        {
+            checkPoint = 0;
+            std::cout << "Checkpoint entered" << std::endl;
+            if (pieces[piece_no].is_safe)
+                return;
+            for (int i = 0; i < noOfPlayers; i++)
+            {
+                std::cout << "Checking started for" << i << " " << (i != pt) << std::endl;
+                for (int j = 0; j < 4; j++)
+                {
+                    if ((i != pt) && players[i].pieces[j].get_coordinates() == pieces[piece_no].get_coordinates())
+                    {
+                        std::cout << "Found" << std::endl;
+                        players[i].pieces[j].moveBackward();
+                        if (step != 1 && step != 6)
                         {
-                            playerTurn++;
-                            player_changed = 1;
-                            std::cout << "Player changed 2";
+                            playerTurn--;
+                            player_changed = 0;
                         }
-                        dice_turn = 1;
-                        dice = 0;
-                        diceInfo = 0;
-                        break;
                     }
                 }
             }
         }
     }
+    // }
 };
 
 int main()
@@ -432,10 +462,10 @@ int main()
 
             dice_turn = 0;
             dice = 1;
-            srand(time(0));
-            step = ((rand() % 6) + 1);
-            // std::cout << "Enter dice no: ";
-            // std::cin >> step;
+            // srand(time(0));
+            // step = ((rand() % 6) + 1);
+            std::cout << "Enter dice no: ";
+            std::cin >> step;
             std::cout << "Dice Rolled: " << step << std::endl;
             if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
@@ -462,12 +492,15 @@ int main()
                 mouse_tracker = 1;
             }
         }
+
         if (piece_changed)
         {
             int turn = playerTurn;
             std::cout << player_changed << std::endl;
             if (player_changed)
                 turn--;
+            if (turn == -1)
+                turn = 3;
             for (int i = 0; i < 4; i++)
             {
                 players[turn].pieces[i].set_texture(filename);
@@ -475,6 +508,7 @@ int main()
             piece_changed = 0;
             player_changed = 0;
         }
+
         window.display();
     }
 
