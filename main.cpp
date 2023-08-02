@@ -10,12 +10,14 @@ int noOfPlayers = 4;
 int playerTurn = 0;
 int dice = 0;
 int diceInfo = 0;
-int step = 0;
+int step = 6;
 int dice_turn = 1;
 int piece_changed = 0;
 int player_changed = 0;
 string filename;
 sf::Vector2i localPosition;
+sf::Sprite diceSprite;
+string dice_order[] = {"1", "2", "3", "4", "5", "6"};
 
 sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
 
@@ -30,10 +32,6 @@ int blue_piece[][4] = {{40, 0, 578, 606}, {41, 1, 578, 562}, {42, 2, 578, 518}, 
 // same order of colour i.e YGRB.
 int safe_position[][4] = {{1, 0, 358, 298}, {14, 0, 666, 78}, {27, 0, 886, 386}, {40, 0, 578, 606}, {9, 8, 578, 122}, {22, 8, 842, 298}, {35, 8, 666, 562}, {48, 8, 402, 386}};
 
-//coordinate of playlocal in first frame is (x,y)=(819,499) and (width,height)=(276,105) i.e x from 819 to 819+276 and y from 499 to 499+105
-//coordinate of 2 in second frame is (x,y)=(256,308) and (width,height)=(95,105)
-//coordinate of 3 in second frame is (x,y)=(593,308) and  (width,height)=(95,105)
-//coordinate of 4 in second frame is (x,y)=(930,308) and (width,height)=(95,105)
 class Coordinates
 {
 private:
@@ -67,6 +65,43 @@ public:
         if (xPos == c.xPos && yPos == c.yPos)
             return true;
         return false;
+    }
+};
+
+class Dice
+{
+private:
+    sf::Texture dice_texture[6];
+    sf::Sprite dice[6];
+    Coordinates coordinate;
+
+public:
+    void set_dice(string *filenames, Coordinates c)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (!dice_texture[i].loadFromFile(filenames[i]))
+            {
+                std::cout << "File cannot be loaded from: " << filenames[i] << std::endl;
+                return;
+            }
+            dice[i].setTexture(dice_texture[i]);
+            coordinate = c;
+            dice[i].setPosition(coordinate.get_xcoords(), coordinate.get_ycoords());
+        }
+    }
+
+    void dice_roll()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            window.draw(dice[i]);
+            window.display();
+            Sleep(100);
+        }
+        srand(time(0));
+        step = ((rand() % 6) + 1);
+        diceSprite = dice[step - 1];
     }
 };
 
@@ -252,8 +287,7 @@ public:
         int pt = playerTurn;
         int checkPoint = 0;
         filename = ".\\assets\\" + colour + "_disc_1.png";
-        // if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-        // {
+
         int lock = 4;
         for (int i = 0; i < 4; i++)
         {
@@ -384,12 +418,21 @@ public:
 
 int main()
 {
-    // Initial Coordinates of Pieces
-    // Coordinates coord11(358 - 40, 298), coord12(468, 100), coord13(380, 188), coord14(468, 188);
     Coordinates coord11(380, 100), coord12(468, 100), coord13(380, 188), coord14(468, 188);
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
+
+    // Creating dice
+    Dice d1;
+    string filenames[6];
+    for (int i = 0; i < 6; i++)
+    {
+        string filename = ".\\assets\\Dice_" + dice_order[i] + ".png";
+        filenames[i] = filename;
+    }
+    Coordinates c(1047, 501);
+    d1.set_dice(filenames, c);
 
     // Creating Pieces
     Piece p11, p12, p13, p14;
@@ -400,19 +443,11 @@ int main()
     string colourOrder[] = {"yellow", "green", "red", "blue"};
     Coordinates coordArr[][4] = {{coord11, coord12, coord13, coord14}, {coord21, coord22, coord23, coord24}, {coord31, coord32, coord33, coord34}, {coord41, coord42, coord43, coord44}};
     Piece pieces[][4] = {{p11, p12, p13, p14}, {p21, p22, p23, p24}, {p31, p32, p33, p34}, {p41, p42, p43, p44}};
-    do
-    {
-        std::cout << "Enter no of Players(2,3,4): ";
-        std::cin >> noOfPlayers;
-        if (noOfPlayers < 2 || noOfPlayers > 4)
-            std::cout << "Invalid No of players!!" << std::endl;
-    } while (noOfPlayers < 2 || noOfPlayers > 4);
+
     Player *players = new Player[noOfPlayers];
     for (int j = 0; j < noOfPlayers; j++)
     {
         string playerName = "Bipin";
-        // std::cout << "Enter name of Player" << j + 1 << "(" << colourOrder[j] << "): ";
-        // std::cin >> playerName;
         string filename = ".\\assets\\" + colourOrder[j] + "_disc.png";
 
         for (int i = 0; i < 4; i++)
@@ -423,16 +458,50 @@ int main()
         players[j] = player;
     }
 
-    sf::Texture backgroundImage;
-    if (!backgroundImage.loadFromFile(".\\assets\\ludo_mini.png"))
+    sf::Texture firstInterface;
+    sf::Texture secondInterface;
+    sf::Texture ludoBoard;
+
+    if (!firstInterface.loadFromFile(".\\assets\\Frame_1.png"))
+    {
+        return -1;
+    }
+
+    if (!secondInterface.loadFromFile(".\\assets\\Frame_2.png"))
+    {
+        return -1;
+    }
+
+    if (!ludoBoard.loadFromFile(".\\assets\\ludo_mini.png"))
     {
         return -1;
     }
 
     // Set the position of the sprite
+    sf::Sprite firstInterfaceSprite;
+    firstInterfaceSprite.setTexture(firstInterface);
 
-    sf::Sprite backgroundSprite;
-    backgroundSprite.setTexture(backgroundImage);
+    sf::Sprite secondInterfaceSprite;
+    secondInterfaceSprite.setTexture(secondInterface);
+
+    sf::Sprite ludoBoardSprite;
+    ludoBoardSprite.setTexture(ludoBoard);
+
+    // variables for Interface display
+    int firstInt = 1;
+    int secondInt = 0;
+    int ludoBoardInt = 0;
+
+    string file = ".\\assets\\Dice_" + dice_order[step - 1] + ".png";
+    sf::Texture diceTexture;
+    if (!diceTexture.loadFromFile(file))
+    {
+        std::cout << "File cant be loaded: " << file << std::endl;
+        return -1;
+    }
+    diceSprite.setTexture(diceTexture);
+    diceSprite.setPosition(1047, 501);
+    int dice_display = 0;
 
     while (window.isOpen())
     {
@@ -444,75 +513,117 @@ int main()
         }
 
         window.clear();
-        window.draw(backgroundSprite);
-        for (int j = 0; j < noOfPlayers; j++)
+        if (firstInt)
         {
-            players[j].draw();
-        }
-        if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-        {
-            mouse_tracker = 1;
-        }
-        if (!diceInfo)
-        {
-            std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
-            std::cout << "Press dice to roll.." << std::endl;
-            diceInfo = 1;
-        }
-
-        localPosition = sf::Mouse::getPosition(window);
-        if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-        {
-
-            dice_turn = 0;
-            dice = 1;
-            srand(time(0));
-            step = ((rand() % 6) + 1);
-            // std::cout << "Enter dice no: ";
-            // std::cin >> step;
-            std::cout << "Dice Rolled: " << step << std::endl;
-            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+            dice_display = 0;
+            window.draw(firstInterfaceSprite);
+            localPosition = sf::Mouse::getPosition(window);
+            if (localPosition.x > 819 && localPosition.x < 1095 && localPosition.y > 499 && localPosition.y < 604 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
-                mouse_tracker = 0;
+                firstInt = 0;
+                secondInt = 1;
             }
-            else
+        }
+
+        if (secondInt)
+        {
+            dice_display = 0;
+            window.draw(secondInterfaceSprite);
+            localPosition = sf::Mouse::getPosition(window);
+
+            if (localPosition.x > 256 && localPosition.x < 351 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                secondInt = 0;
+                ludoBoardInt = 1;
+                noOfPlayers = 2;
+            }
+            if (localPosition.x > 593 && localPosition.x < 688 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                secondInt = 0;
+                ludoBoardInt = 1;
+                noOfPlayers = 3;
+            }
+            if (localPosition.x > 930 && localPosition.x < 1025 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                secondInt = 0;
+                ludoBoardInt = 1;
+                noOfPlayers = 4;
+            }
+        }
+
+        if (ludoBoardInt)
+        {
+            window.draw(ludoBoardSprite);
+            dice_display = 1;
+            for (int j = 0; j < noOfPlayers; j++)
+            {
+                players[j].draw();
+            }
+            if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
                 mouse_tracker = 1;
             }
+            if (!diceInfo)
+            {
+                std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
+                std::cout << "Press dice to roll.." << std::endl;
+                diceInfo = 1;
+            }
+
+            localPosition = sf::Mouse::getPosition(window);
+            if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+
+                dice_turn = 0;
+                dice = 1;
+                d1.dice_roll();
+
+                std::cout << "Dice Rolled: " << step << std::endl;
+                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+                {
+                    mouse_tracker = 0;
+                }
+                else
+                {
+                    mouse_tracker = 1;
+                }
+            }
+
+            //*****************************************************************************************
+            if (dice && mouse_tracker == 1)
+            {
+                players[playerTurn].roll(playerTurn, players, step);
+
+                playerTurn = playerTurn % noOfPlayers;
+                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+                {
+                    mouse_tracker = 0;
+                }
+                else
+                {
+                    mouse_tracker = 1;
+                }
+            }
+
+            if (piece_changed)
+            {
+                int turn = playerTurn;
+                std::cout << player_changed << std::endl;
+                if (player_changed)
+                    turn--;
+                if (turn == -1)
+                    turn = noOfPlayers - 1;
+                for (int i = 0; i < 4; i++)
+                {
+                    players[turn].pieces[i].set_texture(filename);
+                }
+                piece_changed = 0;
+                player_changed = 0;
+            }
         }
 
-        //*****************************************************************************************
-        if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-        {
-            players[playerTurn].roll(playerTurn, players, step);
-
-            playerTurn = playerTurn % noOfPlayers;
-            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-            {
-                mouse_tracker = 0;
-            }
-            else
-            {
-                mouse_tracker = 1;
-            }
-        }
-
-        if (piece_changed)
-        {
-            int turn = playerTurn;
-            std::cout << player_changed << std::endl;
-            if (player_changed)
-                turn--;
-            if (turn == -1)
-                turn = 3;
-            for (int i = 0; i < 4; i++)
-            {
-                players[turn].pieces[i].set_texture(filename);
-            }
-            piece_changed = 0;
-            player_changed = 0;
-        }
-
+        if (dice_display)
+            window.draw(diceSprite);
         window.display();
     }
 
