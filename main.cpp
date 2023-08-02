@@ -30,6 +30,10 @@ int blue_piece[][4] = {{40, 0, 578, 606}, {41, 1, 578, 562}, {42, 2, 578, 518}, 
 // same order of colour i.e YGRB.
 int safe_position[][4] = {{1, 0, 358, 298}, {14, 0, 666, 78}, {27, 0, 886, 386}, {40, 0, 578, 606}, {9, 8, 578, 122}, {22, 8, 842, 298}, {35, 8, 666, 562}, {48, 8, 402, 386}};
 
+//coordinate of playlocal in first frame is (x,y)=(819,499) and (width,height)=(276,105) i.e x from 819 to 819+276 and y from 499 to 499+105
+//coordinate of 2 in second frame is (x,y)=(256,308) and (width,height)=(95,105)
+//coordinate of 3 in second frame is (x,y)=(593,308) and  (width,height)=(95,105)
+//coordinate of 4 in second frame is (x,y)=(930,308) and (width,height)=(95,105)
 class Coordinates
 {
 private:
