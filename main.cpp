@@ -396,13 +396,14 @@ int main()
     string colourOrder[] = {"yellow", "green", "red", "blue"};
     Coordinates coordArr[][4] = {{coord11, coord12, coord13, coord14}, {coord21, coord22, coord23, coord24}, {coord31, coord32, coord33, coord34}, {coord41, coord42, coord43, coord44}};
     Piece pieces[][4] = {{p11, p12, p13, p14}, {p21, p22, p23, p24}, {p31, p32, p33, p34}, {p41, p42, p43, p44}};
-    do
-    {
-        std::cout << "Enter no of Players(2,3,4): ";
-        std::cin >> noOfPlayers;
-        if (noOfPlayers < 2 || noOfPlayers > 4)
-            std::cout << "Invalid No of players!!" << std::endl;
-    } while (noOfPlayers < 2 || noOfPlayers > 4);
+    // do
+    // {
+    //     std::cout << "Enter no of Players(2,3,4): ";
+    //     std::cin >> noOfPlayers;
+    //     if (noOfPlayers < 2 || noOfPlayers > 4)
+    //         std::cout << "Invalid No of players!!" << std::endl;
+    // } while (noOfPlayers < 2 || noOfPlayers > 4);
+    // noOfPlayers=4;
     Player *players = new Player[noOfPlayers];
     for (int j = 0; j < noOfPlayers; j++)
     {
@@ -419,16 +420,39 @@ int main()
         players[j] = player;
     }
 
-    sf::Texture backgroundImage;
-    if (!backgroundImage.loadFromFile(".\\assets\\ludo_mini.png"))
+    sf::Texture firstInterface;
+    sf::Texture secondInterface;
+    sf::Texture ludoBoard;
+
+    if (!firstInterface.loadFromFile(".\\assets\\Frame_1.png"))
+    {
+        return -1;
+    }
+
+    if (!secondInterface.loadFromFile(".\\assets\\Frame_2.png"))
+    {
+        return -1;
+    }
+
+    if (!ludoBoard.loadFromFile(".\\assets\\ludo_mini.png"))
     {
         return -1;
     }
 
     // Set the position of the sprite
+    sf::Sprite firstInterfaceSprite;
+    firstInterfaceSprite.setTexture(firstInterface);
 
-    sf::Sprite backgroundSprite;
-    backgroundSprite.setTexture(backgroundImage);
+    sf::Sprite secondInterfaceSprite;
+    secondInterfaceSprite.setTexture(secondInterface);
+
+    sf::Sprite ludoBoardSprite;
+    ludoBoardSprite.setTexture(ludoBoard);
+
+    // variables for Interface display
+    int firstInt = 1;
+    int secondInt = 0;
+    int ludoBoardInt = 0;
 
     while (window.isOpen())
     {
@@ -440,73 +464,116 @@ int main()
         }
 
         window.clear();
-        window.draw(backgroundSprite);
-        for (int j = 0; j < noOfPlayers; j++)
+        if (firstInt)
         {
-            players[j].draw();
-        }
-        if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-        {
-            mouse_tracker = 1;
-        }
-        if (!diceInfo)
-        {
-            std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
-            std::cout << "Press dice to roll.." << std::endl;
-            diceInfo = 1;
-        }
-
-        localPosition = sf::Mouse::getPosition(window);
-        if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-        {
-
-            dice_turn = 0;
-            dice = 1;
-            // srand(time(0));
-            // step = ((rand() % 6) + 1);
-            std::cout << "Enter dice no: ";
-            std::cin >> step;
-            std::cout << "Dice Rolled: " << step << std::endl;
-            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+            window.draw(firstInterfaceSprite);
+            localPosition = sf::Mouse::getPosition(window);
+            if (localPosition.x > 819 && localPosition.x < 1095 && localPosition.y > 499 && localPosition.y < 604 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
-                mouse_tracker = 0;
+                firstInt = 0;
+                secondInt = 1;
             }
-            else
+        }
+        // coordinate of playlocal in first frame is (x,y)=(819,499) and (width,height)=(276,105) i.e x from 819 to 819+276 and y from 499 to 499+105
+        // coordinate of 2 in second frame is (x,y)=(256,308) and (width,height)=(95,105)
+        // coordinate of 3 in second frame is (x,y)=(593,308) and  (width,height)=(95,105)
+        // coordinate of 4 in second frame is (x,y)=(930,308) and (width,height)=(95,105)
+
+        if (secondInt)
+        {
+            window.draw(secondInterfaceSprite);
+            localPosition = sf::Mouse::getPosition(window);
+
+            if (localPosition.x > 256 && localPosition.x < 351 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                secondInt = 0;
+                ludoBoardInt = 1;
+                noOfPlayers = 2;
+            }
+            if (localPosition.x > 593 && localPosition.x < 688 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                secondInt = 0;
+                ludoBoardInt = 1;
+                noOfPlayers = 3;
+            }
+            if (localPosition.x > 930 && localPosition.x < 1025 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                secondInt = 0;
+                ludoBoardInt = 1;
+                noOfPlayers = 4;
+            }
+        }
+
+        if (ludoBoardInt)
+        {
+            window.draw(ludoBoardSprite);
+            for (int j = 0; j < noOfPlayers; j++)
+            {
+                players[j].draw();
+            }
+            if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
                 mouse_tracker = 1;
             }
-        }
-
-        //*****************************************************************************************
-        if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-        {
-            players[playerTurn].roll(playerTurn, players, step);
-
-            playerTurn = playerTurn % noOfPlayers;
-            if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+            if (!diceInfo)
             {
-                mouse_tracker = 0;
+                std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
+                std::cout << "Press dice to roll.." << std::endl;
+                diceInfo = 1;
             }
-            else
-            {
-                mouse_tracker = 1;
-            }
-        }
 
-        if (piece_changed)
-        {
-            int turn = playerTurn;
-            std::cout << player_changed << std::endl;
-            if (player_changed)
-                turn--;
-            if (turn == -1)
-                turn = 3;
-            for (int i = 0; i < 4; i++)
+            localPosition = sf::Mouse::getPosition(window);
+            if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
-                players[turn].pieces[i].set_texture(filename);
+
+                dice_turn = 0;
+                dice = 1;
+                srand(time(0));
+                step = ((rand() % 6) + 1);
+                // std::cout << "Enter dice no: ";
+                // std::cin >> step;
+                std::cout << "Dice Rolled: " << step << std::endl;
+                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+                {
+                    mouse_tracker = 0;
+                }
+                else
+                {
+                    mouse_tracker = 1;
+                }
             }
-            piece_changed = 0;
-            player_changed = 0;
+
+            //*****************************************************************************************
+            if (dice && mouse_tracker == 1 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                players[playerTurn].roll(playerTurn, players, step);
+
+                playerTurn = playerTurn % noOfPlayers;
+                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
+                {
+                    mouse_tracker = 0;
+                }
+                else
+                {
+                    mouse_tracker = 1;
+                }
+            }
+
+            if (piece_changed)
+            {
+                int turn = playerTurn;
+                std::cout << player_changed << std::endl;
+                if (player_changed)
+                    turn--;
+                if (turn == -1)
+                    turn = 3;
+                for (int i = 0; i < 4; i++)
+                {
+                    players[turn].pieces[i].set_texture(filename);
+                }
+                piece_changed = 0;
+                player_changed = 0;
+            }
         }
 
         window.display();
