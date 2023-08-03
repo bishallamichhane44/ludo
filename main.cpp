@@ -32,6 +32,7 @@ int blue_piece[][4] = {{40, 0, 578, 606}, {41, 1, 578, 562}, {42, 2, 578, 518}, 
 // same order of colour i.e YGRB.
 int safe_position[][4] = {{1, 0, 358, 298}, {14, 0, 666, 78}, {27, 0, 886, 386}, {40, 0, 578, 606}, {9, 8, 578, 122}, {22, 8, 842, 298}, {35, 8, 666, 562}, {48, 8, 402, 386}};
 
+int frame_position[4][2] = {{308, 28}, {706, 29}, {704, 425}, {308, 425}};
 class Coordinates
 {
 private:
@@ -172,6 +173,7 @@ public:
     void set_position(Coordinates c)
     {
         piece.setPosition(c.get_xcoords(), c.get_ycoords());
+        coordinate = c;
     }
 
     void moveForward(int step)
@@ -185,8 +187,17 @@ public:
             }
             else
             {
-                piece.setPosition(yellow_piece[step + score][2], yellow_piece[step + score][3]);
-                set_coordinate(Coordinates(yellow_piece[step + score][2], yellow_piece[step + score][3]));
+                // piece.setPosition(yellow_piece[step + score][2], yellow_piece[step + score][3]);
+                // set_coordinate(Coordinates(yellow_piece[step + score][2], yellow_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(yellow_piece[i + score][2], yellow_piece[i + score][3]);
+                    set_coordinate(Coordinates(yellow_piece[i + score][2], yellow_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(100);
+                }
             }
         }
         else if (colour == "green")
@@ -198,8 +209,17 @@ public:
             }
             else
             {
-                piece.setPosition(green_piece[step + score][2], green_piece[step + score][3]);
-                set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+                // piece.setPosition(green_piece[step + score][2], green_piece[step + score][3]);
+                // set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(green_piece[i + score][2], green_piece[i + score][3]);
+                    set_coordinate(Coordinates(green_piece[i + score][2], green_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(100);
+                }
             }
         }
         else if (colour == "red")
@@ -211,8 +231,17 @@ public:
             }
             else
             {
-                piece.setPosition(red_piece[step + score][2], red_piece[step + score][3]);
-                set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+                // piece.setPosition(red_piece[step + score][2], red_piece[step + score][3]);
+                // set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(red_piece[i + score][2], red_piece[i + score][3]);
+                    set_coordinate(Coordinates(red_piece[i + score][2], red_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(100);
+                }
             }
         }
         else if (colour == "blue")
@@ -224,8 +253,17 @@ public:
             }
             else
             {
-                piece.setPosition(blue_piece[step + score][2], blue_piece[step + score][3]);
-                set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+                // piece.setPosition(blue_piece[step + score][2], blue_piece[step + score][3]);
+                // set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(blue_piece[i + score][2], blue_piece[i + score][3]);
+                    set_coordinate(Coordinates(blue_piece[i + score][2], blue_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(60);
+                }
             }
         }
 
@@ -461,6 +499,7 @@ int main()
     sf::Texture firstInterface;
     sf::Texture secondInterface;
     sf::Texture ludoBoard;
+    sf::Texture frame;
 
     if (!firstInterface.loadFromFile(".\\assets\\Frame_1.png"))
     {
@@ -477,6 +516,11 @@ int main()
         return -1;
     }
 
+    if (!frame.loadFromFile(".\\assets\\frame.png"))
+    {
+        return -1;
+    }
+
     // Set the position of the sprite
     sf::Sprite firstInterfaceSprite;
     firstInterfaceSprite.setTexture(firstInterface);
@@ -486,6 +530,10 @@ int main()
 
     sf::Sprite ludoBoardSprite;
     ludoBoardSprite.setTexture(ludoBoard);
+
+    sf::Sprite frameSprite;
+    frameSprite.setTexture(frame);
+    frameSprite.setPosition(308, 28);
 
     // variables for Interface display
     int firstInt = 1;
@@ -554,6 +602,7 @@ int main()
         if (ludoBoardInt)
         {
             window.draw(ludoBoardSprite);
+            window.draw(frameSprite);
             dice_display = 1;
             for (int j = 0; j < noOfPlayers; j++)
             {
@@ -603,6 +652,7 @@ int main()
                 {
                     mouse_tracker = 1;
                 }
+                frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
             }
 
             if (piece_changed)
