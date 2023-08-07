@@ -30,8 +30,9 @@ int red_piece[][4] = {{27, 0, 886, 386}, {28, 1, 842, 386}, {29, 2, 798, 386}, {
 int blue_piece[][4] = {{40, 0, 578, 606}, {41, 1, 578, 562}, {42, 2, 578, 518}, {43, 3, 578, 474}, {44, 4, 578, 430}, {45, 5, 534, 386}, {46, 6, 490, 386}, {47, 7, 446, 386}, {48, 8, 402, 386}, {49, 9, 358, 386}, {50, 10, 314, 386}, {51, 11, 314, 342}, {0, 12, 314, 298}, {1, 13, 358, 298}, {2, 14, 402, 298}, {3, 15, 446, 298}, {4, 16, 490, 298}, {5, 17, 534, 298}, {6, 18, 578, 254}, {7, 19, 578, 210}, {8, 20, 578, 166}, {9, 21, 578, 122}, {10, 22, 578, 78}, {11, 23, 578, 34}, {12, 24, 622, 34}, {13, 25, 666, 34}, {14, 26, 666, 78}, {15, 27, 666, 122}, {16, 28, 666, 166}, {17, 29, 666, 210}, {18, 30, 666, 254}, {19, 31, 710, 298}, {20, 32, 754, 298}, {21, 33, 798, 298}, {22, 34, 842, 298}, {23, 35, 886, 298}, {24, 36, 930, 298}, {25, 37, 930, 342}, {26, 38, 930, 386}, {27, 39, 886, 386}, {28, 40, 842, 386}, {29, 41, 798, 386}, {30, 42, 754, 386}, {31, 43, 710, 386}, {32, 44, 666, 430}, {33, 45, 666, 474}, {34, 46, 666, 518}, {35, 47, 666, 562}, {36, 48, 666, 606}, {37, 49, 666, 650}, {38, 50, 622, 650}, {68, 51, 622, 606}, {69, 52, 622, 562}, {70, 53, 622, 518}, {71, 54, 622, 474}, {72, 55, 622, 430}, {57, 56, 622, 342}};
 // safe position of ludo where first four are start position of YGRB and then star after 9 squares of respective starting position of
 // same order of colour i.e YGRB.
-int safe_position[][4] = {{1, 0, 358, 298}, {14, 0, 666, 78}, {27, 0, 886, 386}, {40, 0, 578, 606}, {9, 8, 578, 122}, {22, 8, 842, 298}, {35, 8, 666, 562}, {48, 8, 402, 386}};
+int safe_position[][4] = {{1, 0, 358, 298}, {14, 0, 666, 78}, {27, 0, 886, 386}, {40, 0, 578, 606}, {9, 8, 578, 122}, {22, 8, 842, 298}, {35, 8, 666, 562}, {48, 8, 402, 386},{57,56,622,342}};
 
+int frame_position[4][2] = {{308, 28}, {706, 29}, {704, 425}, {308, 425}};
 class Coordinates
 {
 private:
@@ -53,7 +54,7 @@ public:
     {
         return yPos;
     }
-
+    
     void set_coords(int x, int y)
     {
         xPos = x;
@@ -119,6 +120,7 @@ public:
     bool is_locked = true;
     bool is_safe = true;
     bool reached_home = false;
+    bool is_at_base = true;
 
     void set_piece(string filename, Coordinates c, string col)
     {
@@ -158,7 +160,6 @@ public:
     {
         return coordinate;
     }
-
     void set_score(int s)
     {
         score = s;
@@ -172,10 +173,44 @@ public:
     void set_position(Coordinates c)
     {
         piece.setPosition(c.get_xcoords(), c.get_ycoords());
+        coordinate = c;
     }
-
+    int getlocalpos(){
+        int a;
+        for(int i=0;i<58;i++){
+            if(colour=="yellow"){
+                if(yellow_piece[i][2]==coordinate.get_xcoords() && yellow_piece[i][3]==coordinate.get_ycoords()){
+                    a=yellow_piece[i][1];
+                    break;
+                }
+            }
+            else if(colour=="green"){
+                 if(green_piece[i][2]==coordinate.get_xcoords() && green_piece[i][3]==coordinate.get_ycoords()){
+                    a=green_piece[i][1];
+                    break;
+                 }
+            }
+            else if(colour=="red"){
+                 if(red_piece[i][2]==coordinate.get_xcoords() && red_piece[i][3]==coordinate.get_ycoords()){
+                    a=red_piece[i][1];
+                    break;
+                 }
+            }
+            else if(colour=="blue"){
+                 if(blue_piece[i][2]==coordinate.get_xcoords() && blue_piece[i][3]==coordinate.get_ycoords()){
+                    a=blue_piece[i][1];
+                    break;
+                 }
+            }
+            else{
+                a=57;
+            }
+        }
+        return a;
+    }
     void moveForward(int step)
     {
+        Coordinates center1(622,342);
         if (colour == "yellow")
         {
             if (score == -1)
@@ -185,8 +220,23 @@ public:
             }
             else
             {
-                piece.setPosition(yellow_piece[step + score][2], yellow_piece[step + score][3]);
-                set_coordinate(Coordinates(yellow_piece[step + score][2], yellow_piece[step + score][3]));
+                // piece.setPosition(yellow_piece[step + score][2], yellow_piece[step + score][3]);
+                // set_coordinate(Coordinates(yellow_piece[step + score][2], yellow_piece[step + score][3]));
+            
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(yellow_piece[i + score][2], yellow_piece[i + score][3]);
+                    set_coordinate(Coordinates(yellow_piece[i + score][2], yellow_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(100);
+                    
+                }
+                 if(coordinate==center1){
+                        reached_home = true;
+                        is_locked = true;
+                        is_safe=true;
+                     }    
             }
         }
         else if (colour == "green")
@@ -198,8 +248,23 @@ public:
             }
             else
             {
-                piece.setPosition(green_piece[step + score][2], green_piece[step + score][3]);
-                set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+                // piece.setPosition(green_piece[step + score][2], green_piece[step + score][3]);
+                // set_coordinate(Coordinates(green_piece[step + score][2], green_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(green_piece[i + score][2], green_piece[i + score][3]);
+                    set_coordinate(Coordinates(green_piece[i + score][2], green_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(100);
+                     
+                }
+                if(coordinate==center1){
+                        reached_home = true;
+                        is_locked = true;
+                        is_safe=true;
+                     } 
             }
         }
         else if (colour == "red")
@@ -211,8 +276,22 @@ public:
             }
             else
             {
-                piece.setPosition(red_piece[step + score][2], red_piece[step + score][3]);
-                set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+                // piece.setPosition(red_piece[step + score][2], red_piece[step + score][3]);
+                // set_coordinate(Coordinates(red_piece[step + score][2], red_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(red_piece[i + score][2], red_piece[i + score][3]);
+                    set_coordinate(Coordinates(red_piece[i + score][2], red_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(100);
+                }
+                 if(coordinate==center1){
+                        reached_home = true;
+                        is_locked = true;
+                        is_safe=true;
+                     } 
             }
         }
         else if (colour == "blue")
@@ -224,12 +303,26 @@ public:
             }
             else
             {
-                piece.setPosition(blue_piece[step + score][2], blue_piece[step + score][3]);
-                set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+                // piece.setPosition(blue_piece[step + score][2], blue_piece[step + score][3]);
+                // set_coordinate(Coordinates(blue_piece[step + score][2], blue_piece[step + score][3]));
+
+                for (int i = 1; i <= step; i++)
+                {
+                    piece.setPosition(blue_piece[i + score][2], blue_piece[i + score][3]);
+                    set_coordinate(Coordinates(blue_piece[i + score][2], blue_piece[i + score][3]));
+                    window.draw(piece);
+                    window.display();
+                    Sleep(60);
+                }
+                 if(coordinate==center1){
+                        reached_home = true;
+                        is_locked = true;
+                        is_safe=true;
+                     } 
             }
         }
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 9; i++)
         {
             if (coordinate == Coordinates(safe_position[i][2], safe_position[i][3]))
             {
@@ -248,6 +341,7 @@ public:
         set_coordinate(Coordinates(initialCoords.get_xcoords(), initialCoords.get_ycoords()));
         set_score(-1);
         is_locked = true;
+        is_at_base=true;
         std::cout << "Amazing!! you killed one." << std::endl;
     }
 };
@@ -284,6 +378,7 @@ public:
     void roll(int &playerTurn, Player *players, int step)
     {
         //****************************************************************************************
+        Coordinates center1(622,342);
         int pt = playerTurn;
         int checkPoint = 0;
         filename = ".\\assets\\" + colour + "_disc_1.png";
@@ -293,18 +388,40 @@ public:
         {
             if (!players[playerTurn].pieces[i].is_locked)
             {
-                lock--;
+                if(!players[playerTurn].pieces[i].reached_home)
+                  lock--;
             };
         }
-
+        for(int i=0;i<4;i++){
+        if(players[playerTurn].pieces[i].get_coordinates()==center1){
+                          players[playerTurn].pieces[i].reached_home = true;
+                          players[playerTurn].pieces[i].is_locked = true;
+                          players[playerTurn].pieces[i].is_safe = true;
+                          //std::cout<<"center one is locked!!!"<<std::endl;
+                     }
+        if(!players[playerTurn].pieces[i].is_at_base){   
+        if((players[playerTurn].pieces[i].getlocalpos()+step) > 56){
+             players[playerTurn].pieces[i].is_locked = true;
+             //std::cout<<"This piece is locked."<<std::endl;             
+        }
+        else{
+            players[playerTurn].pieces[i].is_locked = false;
+        }
+        }
+        }
+    
         int piece_no;
         if (step == 1)
         {
+            hello:
             for (int i = 0; i < 4; i++)
             {
-                pieces[i].set_texture(filename);
+                if(!players[playerTurn].pieces[i].reached_home){
+                     pieces[i].set_texture(filename);
+                }
+         
             }
-            std::cout << "Press your piece to move/withdraw ( 1 2 3 4 )" << std::endl;
+            //std::cout << "Press your piece to move/withdraw " << std::endl;
 
             for (int i = 0; i < 4; i++)
             {
@@ -317,8 +434,14 @@ public:
                     dice = 0;
                     dice_turn = 1;
                     piece_no = i;
+                    if (pieces[piece_no].reached_home)
+                    {
+                        std::cout << " This piece is already home!! " << std::endl;
+                        goto hello;
+                    }
                     std::cout << piece_no << std::endl;
                     players[playerTurn].pieces[piece_no].is_locked = false;
+                    players[playerTurn].pieces[piece_no].is_at_base = false;  
                     players[playerTurn].pieces[piece_no].moveForward(step);
                     checkPoint = 1;
                     filename = ".\\assets\\" + colour + "_disc.png";
@@ -343,16 +466,18 @@ public:
         {
 
         jump:
-            std::cout << "Press your unlocked piece number to move ( ";
+            //std::cout << "Press your unlocked piece number to move ( ";
             for (int i = 0; i < 4; i++)
             {
                 if (!players[playerTurn].pieces[i].is_locked)
-                {
-                    std::cout << i + 1 << " ";
+                {   
+                    if(!players[playerTurn].pieces[i].reached_home){
+                    //std::cout << i + 1 << " ";
                     pieces[i].set_texture(filename);
+                    }
                 }
             }
-            std::cout << ")" << std::endl;
+            //std::cout << ")" << std::endl;
 
             for (int i = 0; i < 4; i++)
             {
@@ -376,9 +501,12 @@ public:
                     player_changed = 0;
                     if (step != 6)
                     {
+                        if(!players[playerTurn].pieces[piece_no].reached_home){
                         playerTurn++;
                         player_changed = 1;
                         std::cout << "Player changed 2";
+                    }
+
                     }
                     dice_turn = 1;
                     dice = 0;
@@ -431,7 +559,7 @@ int main()
         string filename = ".\\assets\\Dice_" + dice_order[i] + ".png";
         filenames[i] = filename;
     }
-    Coordinates c(1047, 501);
+    Coordinates c(1043, 501);
     d1.set_dice(filenames, c);
 
     // Creating Pieces
@@ -461,6 +589,7 @@ int main()
     sf::Texture firstInterface;
     sf::Texture secondInterface;
     sf::Texture ludoBoard;
+    sf::Texture frame;
 
     if (!firstInterface.loadFromFile(".\\assets\\Frame_1.png"))
     {
@@ -477,6 +606,11 @@ int main()
         return -1;
     }
 
+    if (!frame.loadFromFile(".\\assets\\frame.png"))
+    {
+        return -1;
+    }
+
     // Set the position of the sprite
     sf::Sprite firstInterfaceSprite;
     firstInterfaceSprite.setTexture(firstInterface);
@@ -486,6 +620,10 @@ int main()
 
     sf::Sprite ludoBoardSprite;
     ludoBoardSprite.setTexture(ludoBoard);
+
+    sf::Sprite frameSprite;
+    frameSprite.setTexture(frame);
+    frameSprite.setPosition(308, 28);
 
     // variables for Interface display
     int firstInt = 1;
@@ -500,7 +638,7 @@ int main()
         return -1;
     }
     diceSprite.setTexture(diceTexture);
-    diceSprite.setPosition(1047, 501);
+    diceSprite.setPosition(1043, 501);
     int dice_display = 0;
 
     while (window.isOpen())
@@ -518,7 +656,7 @@ int main()
             dice_display = 0;
             window.draw(firstInterfaceSprite);
             localPosition = sf::Mouse::getPosition(window);
-            if (localPosition.x > 819 && localPosition.x < 1095 && localPosition.y > 499 && localPosition.y < 604 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 46 && localPosition.x < 366 && localPosition.y > 462 && localPosition.y < 563 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
                 firstInt = 0;
                 secondInt = 1;
@@ -531,19 +669,19 @@ int main()
             window.draw(secondInterfaceSprite);
             localPosition = sf::Mouse::getPosition(window);
 
-            if (localPosition.x > 256 && localPosition.x < 351 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 138 && localPosition.x < 229 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 2;
             }
-            if (localPosition.x > 593 && localPosition.x < 688 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 229 && localPosition.x < 319 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 3;
             }
-            if (localPosition.x > 930 && localPosition.x < 1025 && localPosition.y > 308 && localPosition.y < 413 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 319 && localPosition.x < 409 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
@@ -554,6 +692,7 @@ int main()
         if (ludoBoardInt)
         {
             window.draw(ludoBoardSprite);
+            window.draw(frameSprite);
             dice_display = 1;
             for (int j = 0; j < noOfPlayers; j++)
             {
@@ -603,6 +742,7 @@ int main()
                 {
                     mouse_tracker = 1;
                 }
+                frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
             }
 
             if (piece_changed)
