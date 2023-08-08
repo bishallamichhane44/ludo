@@ -102,6 +102,7 @@ public:
         }
         srand(time(0));
         step = ((rand() % 6) + 1);
+        //std::cout<<"Enter dice number:";std::cin>>step;
         diceSprite = dice[step - 1];
     }
 };
@@ -202,9 +203,6 @@ public:
                     break;
                  }
             }
-            else{
-                a=57;
-            }
         }
         return a;
     }
@@ -231,12 +229,7 @@ public:
                     window.display();
                     Sleep(100);
                     
-                }
-                 if(coordinate==center1){
-                        reached_home = true;
-                        is_locked = true;
-                        is_safe=true;
-                     }    
+                } 
             }
         }
         else if (colour == "green")
@@ -260,11 +253,6 @@ public:
                     Sleep(100);
                      
                 }
-                if(coordinate==center1){
-                        reached_home = true;
-                        is_locked = true;
-                        is_safe=true;
-                     } 
             }
         }
         else if (colour == "red")
@@ -286,12 +274,7 @@ public:
                     window.draw(piece);
                     window.display();
                     Sleep(100);
-                }
-                 if(coordinate==center1){
-                        reached_home = true;
-                        is_locked = true;
-                        is_safe=true;
-                     } 
+                }       
             }
         }
         else if (colour == "blue")
@@ -314,14 +297,14 @@ public:
                     window.display();
                     Sleep(60);
                 }
-                 if(coordinate==center1){
+                 
+            }   
+        }
+        if(coordinate==center1){
                         reached_home = true;
                         is_locked = true;
                         is_safe=true;
                      } 
-            }
-        }
-
         for (int i = 0; i < 9; i++)
         {
             if (coordinate == Coordinates(safe_position[i][2], safe_position[i][3]))
@@ -559,7 +542,7 @@ int main()
         string filename = ".\\assets\\Dice_" + dice_order[i] + ".png";
         filenames[i] = filename;
     }
-    Coordinates c(1043, 501);
+    Coordinates c(1039, 490);
     d1.set_dice(filenames, c);
 
     // Creating Pieces
@@ -638,7 +621,7 @@ int main()
         return -1;
     }
     diceSprite.setTexture(diceTexture);
-    diceSprite.setPosition(1043, 501);
+    diceSprite.setPosition(1039, 490);
     int dice_display = 0;
 
     while (window.isOpen())
