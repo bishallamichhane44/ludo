@@ -328,7 +328,46 @@ public:
         std::cout << "Amazing!! you killed one." << std::endl;
     }
 };
+class homereachednum
+{
+    private:
+    sf::Texture num_texture[4];
+    sf::Sprite home_piece[4];
+    //Coordinates coordinate_ofstore[4]={Coordinates(1017,168),Coordinates(1017,221),Coordinates(1017,62),Coordinates(1017,115)};
+    string colour;
+    string number[4] = {"1","2","3","4"};
+    public:
 
+    void setnumber(string col){
+    colour=col;
+    string filename;
+    for(int i=0;i<4;i++){
+        filename =".\\assets\\"+ number[i] +".png";
+        if (!num_texture[i].loadFromFile(filename))
+    {
+        std::cout<<"file cannot be loaded"<<std::endl;
+    }
+    home_piece[i].setTexture(num_texture[i]);
+    if(colour=="yellow"){
+        home_piece[i].setPosition(1020,178);
+    }
+    else if(colour=="green"){
+        home_piece[i].setPosition(1020,231);
+    }
+    else if(colour=="red"){
+        home_piece[i].setPosition(1020,72);
+    }
+    else if(colour=="blue"){
+        home_piece[i].setPosition(1020,125);
+    }
+      }
+    }
+    void draw_(int num){
+    if(num!=0){
+      window.draw(home_piece[num-1]); 
+    }
+    }
+};
 class Player
 {
 private:
@@ -336,9 +375,10 @@ private:
     string colour;
     int total_score = 0;
     bool isActive = false;
-
 public:
     Piece pieces[4];
+    int number_of_piece_home=0;
+    homereachednum home_gotti;
     Player() {}
     Player(string nam, string col, Piece p[])
     {
@@ -392,7 +432,6 @@ public:
         }
         }
         }
-    
         int piece_no;
         if (step == 1)
         {
@@ -430,6 +469,9 @@ public:
                     filename = ".\\assets\\" + colour + "_disc.png";
                     piece_changed = 1;
                     players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
+                    if(players[playerTurn].pieces[piece_no].reached_home){
+                        players[playerTurn].number_of_piece_home+=1;
+                    }
                     break;
                 }
             }
@@ -488,8 +530,16 @@ public:
                         playerTurn++;
                         player_changed = 1;
                         std::cout << "Player changed 2";
-                    }
+                        }
+                        else{
+                        players[playerTurn].number_of_piece_home+=1;
+                        }
 
+                    }
+                    if(step==6){
+                        if(players[playerTurn].pieces[piece_no].reached_home){
+                        players[playerTurn].number_of_piece_home+=1;
+                    }
                     }
                     dice_turn = 1;
                     dice = 0;
@@ -567,6 +617,7 @@ int main()
         }
         Player player(playerName, colourOrder[j], pieces[j]);
         players[j] = player;
+        players[j].home_gotti.setnumber(colourOrder[j]);
     }
 
     sf::Texture firstInterface;
@@ -680,6 +731,7 @@ int main()
             for (int j = 0; j < noOfPlayers; j++)
             {
                 players[j].draw();
+                players[j].home_gotti.draw_(players[j].number_of_piece_home);
             }
             if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
             {
