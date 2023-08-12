@@ -624,7 +624,7 @@ int main()
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
-    int ww=0;
+    int ww=0,player_turn_skipped=0;
     // Creating dice
     Dice d1;
     string filenames[6];
@@ -810,11 +810,7 @@ int main()
             //*****************************************************************************************
             if (dice && mouse_tracker == 1)
             {
-                players[playerTurn].roll(playerTurn, players, step);
-               
-                // if(players[playerTurn].number_of_piece_home==4 && players[playerTurn].allhome==0){
-                //     playerTurn++;
-                // }
+                players[playerTurn].roll(playerTurn, players, step);   
                 playerTurn = playerTurn % noOfPlayers;
                 if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
                 {
@@ -826,15 +822,31 @@ int main()
                 }
                 frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
             }
-
+             if(players[playerTurn].number_of_piece_home==4 && players[playerTurn].allhome==0){
+                    int i=playerTurn-1;
+                    if(i==-1)
+                     { i=noOfPlayers-1;}
+                    filename = ".\\assets\\" + colourOrder[i] + "_disc.png";
+                    playerTurn++;
+                    player_turn_skipped=1;
+                    playerTurn = playerTurn % noOfPlayers;
+                    frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
+                   
+                }
             if (piece_changed)
             {
                 int turn = playerTurn;
                 std::cout << player_changed << std::endl;
-                if (player_changed)
-                    turn--;
+                if(player_changed==1 && player_turn_skipped==1){
+                    turn=turn-2;
+                }
+                else if (player_changed)
+                      turn--;
                 if (turn == -1)
                     turn = noOfPlayers - 1;
+                if(turn==-2)
+                    turn=noOfPlayers-2;    
+                    
                 for (int i = 0; i < 4; i++)
                 {
                     players[turn].pieces[i].set_texture(filename);
