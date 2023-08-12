@@ -368,7 +368,7 @@ class homereachednum
         std::cout<<"file cannot be loaded"<<std::endl;
         }}
     wwindow.setTexture(wtex);
-    wwindow.setPosition(394,285);
+    wwindow.setPosition(393,263);
     for(int i=0;i<4;i++){
         filename =".\\assets\\"+ number[i] +".png";
         if (!num_texture[i].loadFromFile(filename))
@@ -624,7 +624,7 @@ int main()
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
-    int ww=0,player_turn_skipped=0;
+    int ww=0,player_turn_skipped=0,count=0;
     // Creating dice
     Dice d1;
     string filenames[6];
@@ -855,14 +855,22 @@ int main()
                 player_changed = 0;
                 ww=turn;
             }
-
+            for(int i=0;i<noOfPlayers;i++){
+               if(players[i].number_of_piece_home==4){
+                        count++;
+               }
+            }
+            if(count == noOfPlayers){
+                std::cout<<"GAME OVER!!"<<std::endl;
+                window.close(); 
+            }  
             if(players[ww].allhome){
                     players[ww].home_gotti.draw_winwindow();
                     localPosition=sf::Mouse::getPosition(window);
-                    if (localPosition.x > 423 && localPosition.x < 524 && localPosition.y > 402 && localPosition.y < 444 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
+                    if (localPosition.x > 422 && localPosition.x < 523 && localPosition.y > 380 && localPosition.y < 422 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
                         players[ww].allhome=0;
                     }
-                    else if(localPosition.x > 759 && localPosition.x < 860 && localPosition.y > 404 && localPosition.y < 446 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
+                    else if(localPosition.x > 758 && localPosition.x < 859 && localPosition.y > 382 && localPosition.y < 424 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
                         window.close();
                     }
                     
