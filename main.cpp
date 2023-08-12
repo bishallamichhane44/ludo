@@ -176,36 +176,36 @@ public:
         piece.setPosition(c.get_xcoords(), c.get_ycoords());
         coordinate = c;
     }
-    int getlocalpos(){
-        int a;
-        for(int i=0;i<58;i++){
-            if(colour=="yellow"){
-                if(yellow_piece[i][2]==coordinate.get_xcoords() && yellow_piece[i][3]==coordinate.get_ycoords()){
-                    a=yellow_piece[i][1];
-                    break;
-                }
-            }
-            else if(colour=="green"){
-                 if(green_piece[i][2]==coordinate.get_xcoords() && green_piece[i][3]==coordinate.get_ycoords()){
-                    a=green_piece[i][1];
-                    break;
-                 }
-            }
-            else if(colour=="red"){
-                 if(red_piece[i][2]==coordinate.get_xcoords() && red_piece[i][3]==coordinate.get_ycoords()){
-                    a=red_piece[i][1];
-                    break;
-                 }
-            }
-            else if(colour=="blue"){
-                 if(blue_piece[i][2]==coordinate.get_xcoords() && blue_piece[i][3]==coordinate.get_ycoords()){
-                    a=blue_piece[i][1];
-                    break;
-                 }
-            }
-        }
-        return a;
-    }
+    // int getlocalpos(){
+    //     int a;
+    //     for(int i=0;i<58;i++){
+    //         if(colour=="yellow"){
+    //             if(yellow_piece[i][2]==coordinate.get_xcoords() && yellow_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=yellow_piece[i][1];
+    //                 break;
+    //             }
+    //         }
+    //         else if(colour=="green"){
+    //              if(green_piece[i][2]==coordinate.get_xcoords() && green_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=green_piece[i][1];
+    //                 break;
+    //              }
+    //         }
+    //         else if(colour=="red"){
+    //              if(red_piece[i][2]==coordinate.get_xcoords() && red_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=red_piece[i][1];
+    //                 break;
+    //              }
+    //         }
+    //         else if(colour=="blue"){
+    //              if(blue_piece[i][2]==coordinate.get_xcoords() && blue_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=blue_piece[i][1];
+    //                 break;
+    //              }
+    //         }
+    //     }
+    //     return a;
+    // }
     void moveForward(int step)
     {
         Coordinates center1(622,342);
@@ -227,7 +227,7 @@ public:
                     set_coordinate(Coordinates(yellow_piece[i + score][2], yellow_piece[i + score][3]));
                     window.draw(piece);
                     window.display();
-                    Sleep(100);
+                    Sleep(60);
                     
                 } 
             }
@@ -250,7 +250,7 @@ public:
                     set_coordinate(Coordinates(green_piece[i + score][2], green_piece[i + score][3]));
                     window.draw(piece);
                     window.display();
-                    Sleep(100);
+                    Sleep(60);
                      
                 }
             }
@@ -273,7 +273,7 @@ public:
                     set_coordinate(Coordinates(red_piece[i + score][2], red_piece[i + score][3]));
                     window.draw(piece);
                     window.display();
-                    Sleep(100);
+                    Sleep(60);
                 }       
             }
         }
@@ -333,20 +333,48 @@ class homereachednum
     private:
     sf::Texture num_texture[4];
     sf::Sprite home_piece[4];
+    sf::Sprite wwindow;
+    sf::Texture wtex;
     //Coordinates coordinate_ofstore[4]={Coordinates(1017,168),Coordinates(1017,221),Coordinates(1017,62),Coordinates(1017,115)};
     string colour;
     string number[4] = {"1","2","3","4"};
     public:
-
     void setnumber(string col){
     colour=col;
-    string filename;
+    string filename,wwin;
+      if(colour=="yellow"){
+        wwin=".\\assets\\yellowwin.png";
+        if (!wtex.loadFromFile(wwin))
+        {
+          std::cout<<"file cannot be loaded"<<std::endl;
+        }
+        }
+      else if(colour=="green"){
+        wwin=".\\assets\\greenwin.png";
+        if (!wtex.loadFromFile(wwin))
+        {
+        std::cout<<"file cannot be loaded"<<std::endl;
+        }}
+      else if(colour=="red"){
+        wwin=".\\assets\\redwin.png";
+        if (!wtex.loadFromFile(wwin))
+        {
+        std::cout<<"file cannot be loaded"<<std::endl;
+        }}
+      else if(colour=="blue"){
+        wwin=".\\assets\\bluewin.png";
+        if (!wtex.loadFromFile(wwin))
+        {
+        std::cout<<"file cannot be loaded"<<std::endl;
+        }}
+    wwindow.setTexture(wtex);
+    wwindow.setPosition(394,285);
     for(int i=0;i<4;i++){
         filename =".\\assets\\"+ number[i] +".png";
         if (!num_texture[i].loadFromFile(filename))
-    {
+        {
         std::cout<<"file cannot be loaded"<<std::endl;
-    }
+        }
     home_piece[i].setTexture(num_texture[i]);
     if(colour=="yellow"){
         home_piece[i].setPosition(1020,178);
@@ -367,6 +395,9 @@ class homereachednum
       window.draw(home_piece[num-1]); 
     }
     }
+    void draw_winwindow(){
+        window.draw(wwindow);
+    }
 };
 class Player
 {
@@ -379,6 +410,7 @@ public:
     Piece pieces[4];
     int number_of_piece_home=0;
     homereachednum home_gotti;
+    int allhome=0;
     Player() {}
     Player(string nam, string col, Piece p[])
     {
@@ -423,7 +455,7 @@ public:
                           //std::cout<<"center one is locked!!!"<<std::endl;
                      }
         if(!players[playerTurn].pieces[i].is_at_base){   
-        if((players[playerTurn].pieces[i].getlocalpos()+step) > 56){
+        if((players[playerTurn].pieces[i].get_score()+step) > 56){
              players[playerTurn].pieces[i].is_locked = true;
              //std::cout<<"This piece is locked."<<std::endl;             
         }
@@ -471,6 +503,9 @@ public:
                     players[playerTurn].pieces[piece_no].set_score(players[playerTurn].pieces[piece_no].get_score() + step);
                     if(players[playerTurn].pieces[piece_no].reached_home){
                         players[playerTurn].number_of_piece_home+=1;
+                        if(players[playerTurn].number_of_piece_home==4){
+                            players[playerTurn].allhome=1;
+                        }
                     }
                     break;
                 }
@@ -533,12 +568,18 @@ public:
                         }
                         else{
                         players[playerTurn].number_of_piece_home+=1;
+                        if(players[playerTurn].number_of_piece_home==4){
+                            players[playerTurn].allhome=1;
+                        }
                         }
 
                     }
                     if(step==6){
                         if(players[playerTurn].pieces[piece_no].reached_home){
                         players[playerTurn].number_of_piece_home+=1;
+                        if(players[playerTurn].number_of_piece_home==4){
+                            players[playerTurn].allhome=1;
+                        }
                     }
                     }
                     dice_turn = 1;
@@ -583,7 +624,7 @@ int main()
     Coordinates coord21(776, 100), coord22(864, 100), coord23(776, 188), coord24(864, 188);
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
-
+    int ww=0;
     // Creating dice
     Dice d1;
     string filenames[6];
@@ -728,8 +769,11 @@ int main()
             window.draw(ludoBoardSprite);
             window.draw(frameSprite);
             dice_display = 1;
-            for (int j = 0; j < noOfPlayers; j++)
-            {
+            for (int i=0,j=(playerTurn+1)%noOfPlayers; i < noOfPlayers; i++,j++)
+            {   
+                if(j>(noOfPlayers-1)){
+                    j=j%noOfPlayers;
+                }
                 players[j].draw();
                 players[j].home_gotti.draw_(players[j].number_of_piece_home);
             }
@@ -767,7 +811,10 @@ int main()
             if (dice && mouse_tracker == 1)
             {
                 players[playerTurn].roll(playerTurn, players, step);
-
+               
+                // if(players[playerTurn].number_of_piece_home==4 && players[playerTurn].allhome==0){
+                //     playerTurn++;
+                // }
                 playerTurn = playerTurn % noOfPlayers;
                 if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
                 {
@@ -794,11 +841,25 @@ int main()
                 }
                 piece_changed = 0;
                 player_changed = 0;
+                ww=turn;
             }
+
+            if(players[ww].allhome){
+                    players[ww].home_gotti.draw_winwindow();
+                    localPosition=sf::Mouse::getPosition(window);
+                    if (localPosition.x > 423 && localPosition.x < 524 && localPosition.y > 402 && localPosition.y < 444 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
+                        players[ww].allhome=0;
+                    }
+                    else if(localPosition.x > 759 && localPosition.x < 860 && localPosition.y > 404 && localPosition.y < 446 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))){
+                        window.close();
+                    }
+                    
+                }  
         }
 
         if (dice_display)
-            window.draw(diceSprite);
+            window.draw(diceSprite);   
+        
         window.display();
     }
 
