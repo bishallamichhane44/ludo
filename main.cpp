@@ -335,40 +335,42 @@ class homereachednum
     sf::Sprite home_piece[4];
     sf::Sprite wwindow;
     sf::Texture wtex;
+    sf::Sprite dicecolourbox;
+    sf::Texture dcb;
     //Coordinates coordinate_ofstore[4]={Coordinates(1017,168),Coordinates(1017,221),Coordinates(1017,62),Coordinates(1017,115)};
     string colour;
     string number[4] = {"1","2","3","4"};
     public:
     void setnumber(string col){
     colour=col;
-    string filename,wwin;
+    string filename,wwin,dicebox;
       if(colour=="yellow"){
         wwin=".\\assets\\yellowwin.png";
+        dicebox=".\\assets\\yellowbox.png";
+        }
+      else if(colour=="green"){
+        wwin=".\\assets\\greenwin.png";
+        dicebox=".\\assets\\greenbox.png";
+        }
+      else if(colour=="red"){
+        wwin=".\\assets\\redwin.png";
+        dicebox=".\\assets\\redbox.png";
+        }
+      else if(colour=="blue"){
+        wwin=".\\assets\\bluewin.png";
+        dicebox=".\\assets\\bluebox.png";
+        }
         if (!wtex.loadFromFile(wwin))
         {
           std::cout<<"file cannot be loaded"<<std::endl;
         }
+        if(!dcb.loadFromFile(dicebox)){
+            std::cout<<"file cannot be loaded"<<std::endl;
         }
-      else if(colour=="green"){
-        wwin=".\\assets\\greenwin.png";
-        if (!wtex.loadFromFile(wwin))
-        {
-        std::cout<<"file cannot be loaded"<<std::endl;
-        }}
-      else if(colour=="red"){
-        wwin=".\\assets\\redwin.png";
-        if (!wtex.loadFromFile(wwin))
-        {
-        std::cout<<"file cannot be loaded"<<std::endl;
-        }}
-      else if(colour=="blue"){
-        wwin=".\\assets\\bluewin.png";
-        if (!wtex.loadFromFile(wwin))
-        {
-        std::cout<<"file cannot be loaded"<<std::endl;
-        }}
     wwindow.setTexture(wtex);
     wwindow.setPosition(393,263);
+    dicecolourbox.setTexture(dcb);
+    dicecolourbox.setPosition(991,437);
     for(int i=0;i<4;i++){
         filename =".\\assets\\"+ number[i] +".png";
         if (!num_texture[i].loadFromFile(filename))
@@ -397,6 +399,9 @@ class homereachednum
     }
     void draw_winwindow(){
         window.draw(wwindow);
+    }
+    void draw_dicecolour(){
+        window.draw(dicecolourbox);
     }
 };
 class Player
@@ -768,6 +773,7 @@ int main()
         {
             window.draw(ludoBoardSprite);
             window.draw(frameSprite);
+            players[playerTurn].home_gotti.draw_dicecolour();
             dice_display = 1;
             for (int i=0,j=(playerTurn+1)%noOfPlayers; i < noOfPlayers; i++,j++)
             {   
