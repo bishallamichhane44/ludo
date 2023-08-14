@@ -5,7 +5,6 @@
 #include <bits/stdc++.h>
 
 using std::string;
-int mouse_tracker;
 int noOfPlayers = 4;
 int playerTurn = 0;
 int dice = 0;
@@ -18,6 +17,7 @@ string filename;
 sf::Vector2i localPosition;
 sf::Sprite diceSprite;
 string dice_order[] = {"1", "2", "3", "4", "5", "6"};
+int computerishere=0;
 
 sf::RenderWindow window(sf::VideoMode(1280, 720), "Play Ludo", sf::Style::Titlebar | sf::Style::Close);
 
@@ -176,6 +176,36 @@ public:
         piece.setPosition(c.get_xcoords(), c.get_ycoords());
         coordinate = c;
     }
+    // int getlocalpos(){
+    //     int a;
+    //     for(int i=0;i<58;i++){
+    //         if(colour=="yellow"){
+    //             if(yellow_piece[i][2]==coordinate.get_xcoords() && yellow_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=yellow_piece[i][1];
+    //                 break;
+    //             }
+    //         }
+    //         else if(colour=="green"){
+    //              if(green_piece[i][2]==coordinate.get_xcoords() && green_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=green_piece[i][1];
+    //                 break;
+    //              }
+    //         }
+    //         else if(colour=="red"){
+    //              if(red_piece[i][2]==coordinate.get_xcoords() && red_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=red_piece[i][1];
+    //                 break;
+    //              }
+    //         }
+    //         else if(colour=="blue"){
+    //              if(blue_piece[i][2]==coordinate.get_xcoords() && blue_piece[i][3]==coordinate.get_ycoords()){
+    //                 a=blue_piece[i][1];
+    //                 break;
+    //              }
+    //         }
+    //     }
+    //     return a;
+    // }
     void moveForward(int step)
     {
         Coordinates center1(622,342);
@@ -286,6 +316,7 @@ public:
                 is_safe = false;
         }
         std::cout << "You are progressing ..." << std::endl;
+      
     }
 
     void moveBackward()
@@ -300,7 +331,7 @@ public:
 };
 class homereachednum
 {
-    private:
+     private:
     sf::Texture num_texture[4];
     sf::Sprite home_piece[4];
     sf::Sprite wwindow;
@@ -386,6 +417,7 @@ public:
     int number_of_piece_home=0;
     homereachednum home_gotti;
     int allhome=0;
+    int imComputer=0;
     Player() {}
     Player(string nam, string col, Piece p[])
     {
@@ -395,6 +427,13 @@ public:
         {
             pieces[i] = p[i];
         }
+        
+    }
+    void checkComputer(Player *players){
+            for(int i=0;i<(noOfPlayers-1);i++){
+              players[i+1].imComputer=1;
+            }
+        
     }
     void draw()
     {
@@ -403,7 +442,7 @@ public:
             window.draw(pieces[i].get_piece());
         }
     }
-
+    
     // void roll(int &playerTurn, Player *players)
     void roll(int &playerTurn, Player *players, int step)
     {
@@ -423,6 +462,12 @@ public:
             };
         }
         for(int i=0;i<4;i++){
+        // if(players[playerTurn].pieces[i].get_coordinates()==center1){
+        //                   players[playerTurn].pieces[i].reached_home = true;
+        //                   players[playerTurn].pieces[i].is_locked = true;
+        //                   players[playerTurn].pieces[i].is_safe = true;
+        //                   //std::cout<<"center one is locked!!!"<<std::endl;
+        //              }
         if(!players[playerTurn].pieces[i].is_at_base){   
         if((players[playerTurn].pieces[i].get_score()+step) > 56){
              players[playerTurn].pieces[i].is_locked = true;
@@ -451,16 +496,20 @@ public:
                 localPosition = sf::Mouse::getPosition(window);
                 int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
                 int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
-                if (localPosition.x > pieceX && localPosition.x < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+                if ((localPosition.x > pieceX && localPosition.x < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))) || players[playerTurn].imComputer==1)
                 {
                     diceInfo = 0;
                     dice = 0;
                     dice_turn = 1;
                     piece_no = i;
                     if (pieces[piece_no].reached_home)
-                    {
+                    {   
                         std::cout << " This piece is already home!! " << std::endl;
-                        goto hello;
+                        if(!players[playerTurn].imComputer)
+                           goto hello;
+                        else
+                           continue;    
+                           
                     }
                     std::cout << piece_no << std::endl;
                     players[playerTurn].pieces[piece_no].is_locked = false;
@@ -490,6 +539,7 @@ public:
             dice_turn = 1;
             dice = 0;
             diceInfo = 0;
+           
         }
         else
         {
@@ -513,14 +563,18 @@ public:
                 localPosition = sf::Mouse::getPosition(window);
                 int pieceX = players[playerTurn].pieces[i].get_coordinates().get_xcoords();
                 int pieceY = players[playerTurn].pieces[i].get_coordinates().get_ycoords();
-                if (localPosition.x > pieceX && localPosition.x < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+                if ((localPosition.x > pieceX && localPosition.x < pieceX + 40 && localPosition.y > pieceY && localPosition.y < pieceY + 40 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))) || players[playerTurn].imComputer==1)
                 {
                     piece_no = i;
                     std::cout << piece_no << std::endl;
                     if (pieces[piece_no].is_locked)
                     {
                         std::cout << "Ohhh!! This piece is locked!!" << std::endl;
-                        goto jump;
+                        if(!players[playerTurn].imComputer)
+                           goto jump;
+                        else
+                           continue;
+                        
                     }
                     players[playerTurn].pieces[piece_no].moveForward(step);
                     piece_changed = 1;
@@ -594,6 +648,7 @@ int main()
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
     int ww=0,player_turn_skipped=0,count=0;
+    int computernote=0;
     // Creating dice
     Dice d1;
     string filenames[6];
@@ -632,6 +687,7 @@ int main()
 
     sf::Texture firstInterface;
     sf::Texture secondInterface;
+    sf::Texture secondComputerinterface;
     sf::Texture ludoBoard;
     sf::Texture frame;
 
@@ -641,6 +697,11 @@ int main()
     }
 
     if (!secondInterface.loadFromFile(".\\assets\\Frame_2.png"))
+    {
+        return -1;
+    }
+
+    if(!secondComputerinterface.loadFromFile(".\\assets\\Frame_2comp.png"))
     {
         return -1;
     }
@@ -661,6 +722,9 @@ int main()
 
     sf::Sprite secondInterfaceSprite;
     secondInterfaceSprite.setTexture(secondInterface);
+
+    sf::Sprite secondComputerinterfaceSprite;
+    secondComputerinterfaceSprite.setTexture(secondComputerinterface);
 
     sf::Sprite ludoBoardSprite;
     ludoBoardSprite.setTexture(ludoBoard);
@@ -684,6 +748,7 @@ int main()
     diceSprite.setTexture(diceTexture);
     diceSprite.setPosition(1039, 490);
     int dice_display = 0;
+    
 
     while (window.isOpen())
     {
@@ -693,7 +758,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
+      
         window.clear();
         if (firstInt)
         {
@@ -705,40 +770,62 @@ int main()
                 firstInt = 0;
                 secondInt = 1;
             }
+            if (localPosition.x > 46 && localPosition.x < 366 && localPosition.y > 337 && localPosition.y < 438 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            {
+                firstInt = 0;
+                secondInt = 1;
+                computerishere=1;
+            }
         }
 
         if (secondInt)
         {
             dice_display = 0;
-            window.draw(secondInterfaceSprite);
-            localPosition = sf::Mouse::getPosition(window);
+            if(computerishere)
+            {
+                window.draw(secondComputerinterfaceSprite);
+            }
+            else
+            {
+                window.draw(secondInterfaceSprite);
+            }
 
-            if (localPosition.x > 138 && localPosition.x < 229 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            localPosition = sf::Mouse::getPosition(window);
+            if(!sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+                computernote=1;
+            }
+            
+            if (localPosition.x > 138 && localPosition.x < 229 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))&&computernote==1)
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 2;
             }
-            if (localPosition.x > 229 && localPosition.x < 319 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+           
+            if (localPosition.x > 229 && localPosition.x < 319 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))&&computernote==1)
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 3;
             }
-            if (localPosition.x > 319 && localPosition.x < 409 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 319 && localPosition.x < 409 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))&&computernote==1)
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 4;
             }
         }
-
+      
         if (ludoBoardInt)
         {
             window.draw(ludoBoardSprite);
             window.draw(frameSprite);
             players[playerTurn].home_gotti.draw_dicecolour();
             dice_display = 1;
+            if(computerishere){
+                players[playerTurn].checkComputer(players);
+                computerishere=0;
+            }
             for (int i=0,j=(playerTurn+1)%noOfPlayers; i < noOfPlayers; i++,j++)
             {   
                 if(j>(noOfPlayers-1)){
@@ -747,10 +834,7 @@ int main()
                 players[j].draw();
                 players[j].home_gotti.draw_(players[j].number_of_piece_home);
             }
-            if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-            {
-                mouse_tracker = 1;
-            }
+            
             if (!diceInfo)
             {
                 std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
@@ -759,7 +843,7 @@ int main()
             }
 
             localPosition = sf::Mouse::getPosition(window);
-            if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if ((dice_turn  == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left))) || (players[playerTurn].imComputer  && dice_turn==1))
             {
 
                 dice_turn = 0;
@@ -767,29 +851,15 @@ int main()
                 d1.dice_roll();
 
                 std::cout << "Dice Rolled: " << step << std::endl;
-                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-                {
-                    mouse_tracker = 0;
-                }
-                else
-                {
-                    mouse_tracker = 1;
-                }
+                
             }
 
             //*****************************************************************************************
-            if (dice && mouse_tracker == 1)
-            {
+            if (dice == 1)
+            {   
+                
                 players[playerTurn].roll(playerTurn, players, step);   
                 playerTurn = playerTurn % noOfPlayers;
-                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-                {
-                    mouse_tracker = 0;
-                }
-                else
-                {
-                    mouse_tracker = 1;
-                }
                 frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
             }
              if(players[playerTurn].number_of_piece_home==4 && players[playerTurn].allhome==0){
@@ -803,6 +873,7 @@ int main()
                     frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
                    
                 }
+               
             if (piece_changed)
             {
                 int turn = playerTurn;
@@ -832,7 +903,7 @@ int main()
             }
             if(count == noOfPlayers){
                 std::cout<<"GAME OVER!!"<<std::endl;
-                window.close(); 
+                window.close();
             }  
             if(players[ww].allhome){
                     players[ww].home_gotti.draw_winwindow();
@@ -844,13 +915,15 @@ int main()
                         window.close();
                     }
                     
-                }  
+                }
+            
         }
 
         if (dice_display)
-            window.draw(diceSprite);   
-        
+            window.draw(diceSprite);
+
         window.display();
+        
     }
 
     return 0;
