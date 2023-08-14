@@ -1,15 +1,12 @@
 #include<iostream>
+#include<windows.h>
+#include<string>
+#include<time.h>
+#include <cstdlib>
 using namespace std;
-
-
-int test(){
-  int k=122;
-  return k;
-}
-
 int main(){
-  int k=test();
-  cout<<test;
+  int i=0;
+  srand(time(0));
+cout << (rand()%6)+1 << " ";
   return 0;
-}
-
+};
