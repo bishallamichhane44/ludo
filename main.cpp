@@ -176,36 +176,7 @@ public:
         piece.setPosition(c.get_xcoords(), c.get_ycoords());
         coordinate = c;
     }
-    // int getlocalpos(){
-    //     int a;
-    //     for(int i=0;i<58;i++){
-    //         if(colour=="yellow"){
-    //             if(yellow_piece[i][2]==coordinate.get_xcoords() && yellow_piece[i][3]==coordinate.get_ycoords()){
-    //                 a=yellow_piece[i][1];
-    //                 break;
-    //             }
-    //         }
-    //         else if(colour=="green"){
-    //              if(green_piece[i][2]==coordinate.get_xcoords() && green_piece[i][3]==coordinate.get_ycoords()){
-    //                 a=green_piece[i][1];
-    //                 break;
-    //              }
-    //         }
-    //         else if(colour=="red"){
-    //              if(red_piece[i][2]==coordinate.get_xcoords() && red_piece[i][3]==coordinate.get_ycoords()){
-    //                 a=red_piece[i][1];
-    //                 break;
-    //              }
-    //         }
-    //         else if(colour=="blue"){
-    //              if(blue_piece[i][2]==coordinate.get_xcoords() && blue_piece[i][3]==coordinate.get_ycoords()){
-    //                 a=blue_piece[i][1];
-    //                 break;
-    //              }
-    //         }
-    //     }
-    //     return a;
-    // }
+    
     void moveForward(int step)
     {
         Coordinates center1(622,342);
@@ -462,12 +433,6 @@ public:
             };
         }
         for(int i=0;i<4;i++){
-        // if(players[playerTurn].pieces[i].get_coordinates()==center1){
-        //                   players[playerTurn].pieces[i].reached_home = true;
-        //                   players[playerTurn].pieces[i].is_locked = true;
-        //                   players[playerTurn].pieces[i].is_safe = true;
-        //                   //std::cout<<"center one is locked!!!"<<std::endl;
-        //              }
         if(!players[playerTurn].pieces[i].is_at_base){   
         if((players[playerTurn].pieces[i].get_score()+step) > 56){
              players[playerTurn].pieces[i].is_locked = true;
