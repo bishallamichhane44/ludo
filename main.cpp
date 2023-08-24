@@ -196,6 +196,7 @@ public:
                     piece.setPosition(yellow_piece[i + score][2], yellow_piece[i + score][3]);
                     set_coordinate(Coordinates(yellow_piece[i + score][2], yellow_piece[i + score][3]));
                     window.draw(piece);
+                    window.draw(diceSprite);
                     window.display();
                     Sleep(60);
                     
@@ -219,6 +220,7 @@ public:
                     piece.setPosition(green_piece[i + score][2], green_piece[i + score][3]);
                     set_coordinate(Coordinates(green_piece[i + score][2], green_piece[i + score][3]));
                     window.draw(piece);
+                    window.draw(diceSprite);
                     window.display();
                     Sleep(60);
                      
@@ -242,6 +244,7 @@ public:
                     piece.setPosition(red_piece[i + score][2], red_piece[i + score][3]);
                     set_coordinate(Coordinates(red_piece[i + score][2], red_piece[i + score][3]));
                     window.draw(piece);
+                    window.draw(diceSprite);
                     window.display();
                     Sleep(60);
                 }       
@@ -264,6 +267,7 @@ public:
                     piece.setPosition(blue_piece[i + score][2], blue_piece[i + score][3]);
                     set_coordinate(Coordinates(blue_piece[i + score][2], blue_piece[i + score][3]));
                     window.draw(piece);
+                    window.draw(diceSprite);
                     window.display();
                     Sleep(60);
                 }
@@ -812,15 +816,15 @@ int main()
                 player_changed = 0;
                 ww=turn;
             }
-            for(int i=0;i<noOfPlayers;i++){
-               if(players[i].number_of_piece_home==4){
-                        count++;
-               }
-            }
-            if(count == noOfPlayers){
-                std::cout<<"GAME OVER!!"<<std::endl;
-                window.close(); 
-            }  
+            // for(int i=0;i<noOfPlayers;i++){
+            //    if(players[i].number_of_piece_home==4){
+            //             count+=1;
+            //    }
+            // }
+            // if(count == noOfPlayers){
+            //     std::cout<<"GAME OVER!!"<<std::endl;
+            //     window.close(); 
+            // }  
             if(players[ww].allhome){
                     players[ww].home_gotti.draw_winwindow();
                     localPosition=sf::Mouse::getPosition(window);
