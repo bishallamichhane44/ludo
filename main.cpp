@@ -594,6 +594,7 @@ int main()
     Coordinates coord31(776, 496), coord32(864, 496), coord33(776, 584), coord34(864, 584);
     Coordinates coord41(380, 496), coord42(468, 496), coord43(380, 584), coord44(468, 584);
     int ww=0,player_turn_skipped=0,count=0;
+    int firstwindowclicked=0;
     // Creating dice
     Dice d1;
     string filenames[6];
@@ -700,7 +701,7 @@ int main()
             dice_display = 0;
             window.draw(firstInterfaceSprite);
             localPosition = sf::Mouse::getPosition(window);
-            if (localPosition.x > 46 && localPosition.x < 366 && localPosition.y > 462 && localPosition.y < 563 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 46 && localPosition.x < 366 && localPosition.y > 337 && localPosition.y < 438 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
                 firstInt = 0;
                 secondInt = 1;
@@ -712,20 +713,23 @@ int main()
             dice_display = 0;
             window.draw(secondInterfaceSprite);
             localPosition = sf::Mouse::getPosition(window);
+            if(!sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+                firstwindowclicked=1;
+            }
 
-            if (localPosition.x > 138 && localPosition.x < 229 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 138 && localPosition.x < 229 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)) && firstwindowclicked==1)
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 2;
             }
-            if (localPosition.x > 229 && localPosition.x < 319 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 229 && localPosition.x < 319 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)) && firstwindowclicked==1)
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
                 noOfPlayers = 3;
             }
-            if (localPosition.x > 319 && localPosition.x < 409 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (localPosition.x > 319 && localPosition.x < 409 && localPosition.y > 351 && localPosition.y < 452 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)) && firstwindowclicked==1)
             {
                 secondInt = 0;
                 ludoBoardInt = 1;
@@ -747,10 +751,7 @@ int main()
                 players[j].draw();
                 players[j].home_gotti.draw_(players[j].number_of_piece_home);
             }
-            if (!((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-            {
-                mouse_tracker = 1;
-            }
+            
             if (!diceInfo)
             {
                 std::cout << "\n********** " << colourOrder[playerTurn] << "'s turn **************" << std::endl;
@@ -759,7 +760,7 @@ int main()
             }
 
             localPosition = sf::Mouse::getPosition(window);
-            if (dice_turn && mouse_tracker == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+            if (dice_turn == 1 && localPosition.x < 1201 && localPosition.x > 1001 && localPosition.y < 673 && localPosition.y > 443 && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
             {
 
                 dice_turn = 0;
@@ -767,29 +768,15 @@ int main()
                 d1.dice_roll();
 
                 std::cout << "Dice Rolled: " << step << std::endl;
-                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-                {
-                    mouse_tracker = 0;
-                }
-                else
-                {
-                    mouse_tracker = 1;
-                }
+                
             }
 
             //*****************************************************************************************
-            if (dice && mouse_tracker == 1)
+            if (dice)
             {
                 players[playerTurn].roll(playerTurn, players, step);   
                 playerTurn = playerTurn % noOfPlayers;
-                if (((sf::Mouse::isButtonPressed(sf::Mouse::Left))))
-                {
-                    mouse_tracker = 0;
-                }
-                else
-                {
-                    mouse_tracker = 1;
-                }
+                
                 frameSprite.setPosition(frame_position[playerTurn][0], frame_position[playerTurn][1]);
             }
              if(players[playerTurn].number_of_piece_home==4 && players[playerTurn].allhome==0){
