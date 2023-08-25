@@ -26,8 +26,8 @@ A third semester project on Object Oriented Programming made by Computer Enginee
 
 ## Documentation 
 
-- [Project Reoprt](https://linktodocumentation)
-- [Presentation ](https://linktodocumentation)
+- [Project Reoprt](https://github.com/bishallamichhane44/ludo/blob/master/documentation/Project%20Report.pdf)
+- [Presentation ](https://github.com/bishallamichhane44/ludo/blob/master/documentation/Presentation.pdf)
 
 
 
