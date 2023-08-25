@@ -14,7 +14,7 @@ A third semester project on Object Oriented Programming made by Computer Enginee
 
 ![Logo](https://github.com/bishallamichhane44/ludo/blob/master/assets/Frame_2.png?raw=true)
 
-![Logo](https://github.com/bishallamichhane44/ludo/blob/master/assets/ludo_mini.png?raw=true)
+![Logo](https://github.com/bishallamichhane44/ludo/blob/master/assets/screenshot.PNG)
 
 
 
