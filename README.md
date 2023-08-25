@@ -1,7 +1,7 @@
 
 # Ludo 
 
-A third semester project on Object Oriented Programming made by Computer Engineering students of IOE Pulchowk Campus.
+A third semester project on Object Oriented Programming made by Computer Engineering students of IOE Pulchowk Campus. Made using C++ and SFML.
 ## Contributors
 
 - [Bishal Lamichhane](https://www.github.com/bishallamichhane44) (078BCT035)
